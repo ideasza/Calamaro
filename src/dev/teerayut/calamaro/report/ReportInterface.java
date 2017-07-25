@@ -1,7 +1,7 @@
-package update;
+package dev.teerayut.calamaro.report;
 
-public interface UpdateInterface {
-	
+public interface ReportInterface {
+
 	public interface View {
 		
 	}
@@ -9,5 +9,4 @@ public interface UpdateInterface {
 	public interface Presenter {
 		
 	}
-
 }

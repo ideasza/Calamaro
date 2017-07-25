@@ -1,13 +1,14 @@
-package show;
+package dev.teerayut.calamaro.report;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class ShowActivity extends JFrame implements ShowInterface.View {
+public class ReportActivity extends JFrame implements ReportInterface.View{
 
 	private JPanel contentPane;
 
@@ -18,7 +19,7 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ShowActivity frame = new ShowActivity();
+					ReportActivity frame = new ReportActivity();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -30,9 +31,10 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 	/**
 	 * Create the frame.
 	 */
-	public ShowActivity() {
+	public ReportActivity() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
+		setIconImage(new ImageIcon(getClass().getResource("/ic_calamaro.png")).getImage());
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));

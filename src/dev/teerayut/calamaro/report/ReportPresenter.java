@@ -1,4 +1,4 @@
-package report;
+package dev.teerayut.calamaro.report;
 
 public class ReportPresenter implements ReportInterface.Presenter {
 	

@@ -1,4 +1,4 @@
-package show;
+package dev.teerayut.calamaro.show;
 
 public interface ShowInterface {
 	

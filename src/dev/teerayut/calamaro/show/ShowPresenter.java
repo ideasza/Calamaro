@@ -1,4 +1,4 @@
-package show;
+package dev.teerayut.calamaro.show;
 
 public class ShowPresenter implements ShowInterface.Presenter {
 	

@@ -1,4 +1,4 @@
-package update;
+package dev.teerayut.calamaro.update;
 
 public class UpdatePresenter implements UpdateInterface.Presenter{
 	
