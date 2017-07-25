@@ -1,6 +1,6 @@
-package dev.teerayut.calamaro.main;
+package update;
 
-public interface MainInterface {
+public interface UpdateInterface {
 	
 	public interface View {
 		

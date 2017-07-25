@@ -1,4 +1,4 @@
-package dev.teerayut.calamaro.main;
+package show;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class MainActivity extends JFrame implements MainInterface.View{
+public class ShowActivity extends JFrame implements ShowInterface.View {
 
 	private JPanel contentPane;
 
@@ -18,7 +18,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainActivity frame = new MainActivity();
+					ShowActivity frame = new ShowActivity();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -30,7 +30,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	/**
 	 * Create the frame.
 	 */
-	public MainActivity() {
+	public ShowActivity() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();

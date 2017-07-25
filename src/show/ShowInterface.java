@@ -1,6 +1,6 @@
-package dev.teerayut.calamaro.main;
+package show;
 
-public interface MainInterface {
+public interface ShowInterface {
 	
 	public interface View {
 		

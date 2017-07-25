@@ -1,7 +1,7 @@
-package dev.teerayut.calamaro.main;
+package report;
 
-public interface MainInterface {
-	
+public interface ReportInterface {
+
 	public interface View {
 		
 	}
@@ -9,5 +9,4 @@ public interface MainInterface {
 	public interface Presenter {
 		
 	}
-
 }
