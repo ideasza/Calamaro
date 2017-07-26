@@ -27,6 +27,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import dev.teerayut.calamaro.model.CurrencyItem;
 import dev.teerayut.calamaro.settings.SettingsActivity;
 import dev.teerayut.calamaro.utils.Config;
 import dev.teerayut.calamaro.utils.Preferrence;
@@ -35,6 +36,10 @@ import dev.teerayut.calamaro.utils.ScreenCenter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -53,6 +58,10 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	private int width, height, w, h;
 	private Preferrence prefs;
 	private MainPresenter presenter;
+	private StringBuilder sb;
+	
+	private CurrencyItem item;
+	private List<CurrencyItem> currencyItems = new ArrayList<CurrencyItem>();
 
 	/**
 	 * Launch the application.
@@ -93,12 +102,11 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	
 	private javax.swing.JLabel lblCurrency;
 	
-	private javax.swing.JScrollPane scrollPane;
-	
 	private void initWidget() {
 		presenter = new MainPresenter(this);
 		topPanel = new javax.swing.JPanel();
 		bottomPanel = new javax.swing.JPanel();
+		bottomPanel.setBackground(new Color(204, 204, 204));
 		centerPanel = new javax.swing.JPanel();
 		centerTop = new javax.swing.JPanel();
 		centerTop.setBorder(new TitledBorder(null, "Currency", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -121,13 +129,6 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		lblCompanyName = new javax.swing.JLabel();
 		lblCoID = new javax.swing.JLabel();
 		lblSource = new javax.swing.JLabel();
-		scrollPane = new javax.swing.JScrollPane();
-		/*lblCurrency = new javax.swing.JLabel();
-		lblCurrency.setBorder(new LineBorder(new Color(0, 0, 0)));
-		lblCurrency.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblCurrency.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCurrency.setOpaque(true);
-		lblCurrency.setBackground(Color.WHITE);*/
 	}
 	
 	private void getScreenPoint() {	
@@ -236,28 +237,27 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		centerPanel.add(leftInnerCenter, java.awt.BorderLayout.WEST);
 		rightInnerCenter.setPreferredSize(new java.awt.Dimension(100, 40));
 		centerPanel.add(rightInnerCenter, java.awt.BorderLayout.EAST);
-		
-		scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setViewportView(centerTop);
-		centerPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+
+		centerPanel.add(centerTop, java.awt.BorderLayout.CENTER);
 		flowCenter.setHgap(10);
 		flowCenter.setVgap(10);
 		centerTop.setLayout(flowCenter);
 
-		for (int i = 0; i < 21; i++) {
+		/*for (int i = 0; i < 21; i++) {
+			String item = String.format("%-6s %4s %4s", "USD",  ""+ i +"", "4");
 			lblCurrency = new javax.swing.JLabel();
 			lblCurrency.setBorder(new LineBorder(new Color(0, 0, 0)));
-			lblCurrency.setFont(new Font("Tahoma", Font.BOLD, 18));
+			lblCurrency.setFont(new Font("Tahoma", Font.BOLD, 20));
 			lblCurrency.setHorizontalAlignment(SwingConstants.CENTER);
 			lblCurrency.setOpaque(true);
 			lblCurrency.setBackground(Color.WHITE);
 			lblCurrency.setPreferredSize(new java.awt.Dimension(280, 125));
-			lblCurrency.setText("USD | " + (i + 1) + " | " + (i * 4) + " ");
+			lblCurrency.setText(item);
 			lblCurrency.setIcon(new ImageIcon(getClass().getResource("/flag/usd.png")));
 			centerTop.add(lblCurrency);
-		}
-		scrollPane.add(centerTop);
+		}*/
+		
+		presenter.requestCurrency();
 		
 		centerPanel.add(centerBottom, java.awt.BorderLayout.SOUTH);
 		centerBottom.add(centerLeft, java.awt.BorderLayout.WEST);
@@ -330,5 +330,56 @@ public class MainActivity extends JFrame implements MainInterface.View{
 			}
 		});
 		menu.add(settings);
+	}
+
+	@Override
+	public void setCurrencyItem(ResultSet resultSet) {
+		try {
+			while(resultSet.next()) {
+				item = new CurrencyItem();
+				item.setName(resultSet.getString("currency_name").trim().toString());
+				item.setImage(resultSet.getString("currency_image").trim().toString());
+				item.setBuyRate(resultSet.getString("currency_buy_rate").trim().toString());
+				item.setSellRate(resultSet.getString("currency_sell_rate").trim().toString());
+				item.setBuyCode(resultSet.getString("currency_buy_code").trim().toString());
+				item.setSellCode(resultSet.getString("currency_sell_code").trim().toString());
+				currencyItems.add(item);
+			}
+			generateItem(currencyItems);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void generateItem(List<CurrencyItem> listItem) {
+		for (int i = 0; i < listItem.size(); i++) {
+			CurrencyItem item = listItem.get(i);
+			
+			sb = new StringBuilder();
+			sb.append(String.format("%-6s %4s %2s %4s", item.getName(),  item.getBuyCode(), "|" , item.getSellCode()));
+			
+			lblCurrency = new javax.swing.JLabel();
+			lblCurrency.setBorder(new LineBorder(new Color(0, 0, 0)));
+			lblCurrency.setFont(new Font("Tahoma", Font.BOLD, 20));
+			lblCurrency.setHorizontalAlignment(SwingConstants.CENTER);
+			lblCurrency.setOpaque(true);
+			lblCurrency.setBackground(Color.WHITE);
+			lblCurrency.setPreferredSize(new java.awt.Dimension(320, 125));
+			lblCurrency.setText(sb.toString());
+			lblCurrency.setIcon(new ImageIcon(getClass().getResource("/flag/" + item.getImage())));
+			centerTop.add(lblCurrency);
+		}
+	}
+
+	@Override
+	public void onSuccess(String success) {
+		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
+		JOptionPane.showMessageDialog(null, success, "Success", JOptionPane.ERROR_MESSAGE, icon);
+	}
+
+	@Override
+	public void onFail(String fail) {
+		final ImageIcon icon = new ImageIcon(getClass().getResource("/fail32.png"));
+        JOptionPane.showMessageDialog(null, fail, "Alert", JOptionPane.ERROR_MESSAGE, icon);
 	}
 }

@@ -11,6 +11,8 @@ import java.sql.Statement;
 
 import javax.swing.JOptionPane;
 
+import dev.teerayut.calamaro.utils.Config;
+
 public class ConnectionDB {
 
 	private Statement stm;
@@ -21,8 +23,8 @@ public class ConnectionDB {
 	public Connection connect() {
 		try {
 			Class.forName("org.sqlite.JDBC");
-			conn = DriverManager.getConnection("jdbc:sqlite:"/* + Config.DB_PATH + Config.DB_FILE*/);
-			//conn.setAutoCommit(true);
+			conn = DriverManager.getConnection("jdbc:sqlite:" + Config.DB_PATH + Config.DB_FILE);
+			conn.setAutoCommit(true);
 			/*DatabaseMetaData md = conn.getMetaData();
 			ResultSet rs = md.getTables(null, null, "%", null);
 			while(rs.next()) {
