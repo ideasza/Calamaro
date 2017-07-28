@@ -17,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -28,6 +29,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import dev.teerayut.calamaro.model.CurrencyItem;
+import dev.teerayut.calamaro.process.ProcessActivity;
 import dev.teerayut.calamaro.settings.SettingsActivity;
 import dev.teerayut.calamaro.utils.Config;
 import dev.teerayut.calamaro.utils.Preferrence;
@@ -47,6 +49,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.border.TitledBorder;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.UIManager;
 
 
 public class MainActivity extends JFrame implements MainInterface.View{
@@ -60,8 +63,10 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	private MainPresenter presenter;
 	private StringBuilder sb;
 	
+	private static String code;
 	private CurrencyItem item;
 	private List<CurrencyItem> currencyItems = new ArrayList<CurrencyItem>();
+	private static List<CurrencyItem> currencyItemsList = new ArrayList<CurrencyItem>();
 
 	/**
 	 * Launch the application.
@@ -85,6 +90,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	private javax.swing.JPanel topPanel;
 	private javax.swing.JPanel bottomPanel;
 	private javax.swing.JPanel centerPanel;
+	private javax.swing.JPanel itemPanel;
+	private javax.swing.JPanel itemPanelRight;
 	
 	private javax.swing.JPanel centerTop;
 	private javax.swing.JPanel centerLeft;
@@ -100,8 +107,6 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	
 	private javax.swing.JLabel lblSource;
 	
-	private javax.swing.JLabel lblCurrency;
-	
 	private void initWidget() {
 		presenter = new MainPresenter(this);
 		topPanel = new javax.swing.JPanel();
@@ -109,8 +114,9 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		bottomPanel.setBackground(new Color(204, 204, 204));
 		centerPanel = new javax.swing.JPanel();
 		centerTop = new javax.swing.JPanel();
-		centerTop.setBorder(new TitledBorder(null, "Currency", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		centerTop.setBackground(new Color(204, 255, 255));
+		centerTop.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Currency", 
+				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		centerTop.setBackground(new Color(255, 255, 204));
 		centerLeft = new javax.swing.JPanel();
 		centerRight = new javax.swing.JPanel();
 		centerBottom = new javax.swing.JPanel();
@@ -122,7 +128,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					JOptionPane.showMessageDialog(MainActivity.this, textField.getText().toString());
+					code = textField.getText().toString();
+					presenter.getCurrency(code);
 				}
 			}
 		});
@@ -154,6 +161,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 					prefs.setPreferrence("settings_open", "1");
 					lblSource.setText(" jdbc:sqlite: " + new File(Config.DB_PATH + Config.DB_FILE).getAbsolutePath().toString());
 	                lblSource.setIcon(new ImageIcon(getClass().getResource("/database_connect.png")));
+	        		presenter.requestCurrency();
 				} else {
 					prefs.setPreferrence("settings_open", "0");
 					edit.setEnabled(false);
@@ -186,7 +194,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		new ScreenCenter().centreWindow(this);
 		
 		/***********************Bottom************************/
-		bottomPanel.setPreferredSize(new java.awt.Dimension(w, 50));
+		bottomPanel.setPreferredSize(new java.awt.Dimension(w, 40));
 		bottomPanel.setLayout(new java.awt.BorderLayout());
 		getContentPane().add(bottomPanel, java.awt.BorderLayout.SOUTH);
 		
@@ -240,24 +248,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 
 		centerPanel.add(centerTop, java.awt.BorderLayout.CENTER);
 		flowCenter.setHgap(10);
-		flowCenter.setVgap(10);
+		flowCenter.setVgap(5);
 		centerTop.setLayout(flowCenter);
-
-		/*for (int i = 0; i < 21; i++) {
-			String item = String.format("%-6s %4s %4s", "USD",  ""+ i +"", "4");
-			lblCurrency = new javax.swing.JLabel();
-			lblCurrency.setBorder(new LineBorder(new Color(0, 0, 0)));
-			lblCurrency.setFont(new Font("Tahoma", Font.BOLD, 20));
-			lblCurrency.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCurrency.setOpaque(true);
-			lblCurrency.setBackground(Color.WHITE);
-			lblCurrency.setPreferredSize(new java.awt.Dimension(280, 125));
-			lblCurrency.setText(item);
-			lblCurrency.setIcon(new ImageIcon(getClass().getResource("/flag/usd.png")));
-			centerTop.add(lblCurrency);
-		}*/
-		
-		presenter.requestCurrency();
 		
 		centerPanel.add(centerBottom, java.awt.BorderLayout.SOUTH);
 		centerBottom.add(centerLeft, java.awt.BorderLayout.WEST);
@@ -322,6 +314,10 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		                prefs.setPreferrence("settings_open", "1");
 		                lblSource.setText(" jdbc:sqlite: " + new File(Config.DB_PATH + Config.DB_FILE).getAbsolutePath().toString());
 		                lblSource.setIcon(new ImageIcon(getClass().getResource("/database_connect.png")));
+		                if (currencyItems.size() < 0) {
+		                	presenter.requestCurrency();
+		                }
+		                
 					}
 		        }
 				settings.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -351,23 +347,56 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		}
 	}
 	
+	public static List<CurrencyItem> getCurrencyItem() {
+		return currencyItemsList;
+	}
+	
+	public static String getCurrencyCode(){
+		return code;
+	}
+	
 	private void generateItem(List<CurrencyItem> listItem) {
+		this.currencyItemsList = listItem;
 		for (int i = 0; i < listItem.size(); i++) {
-			CurrencyItem item = listItem.get(i);
+			CurrencyItem item = listItem.get(i);			
+			itemPanel = new javax.swing.JPanel();
+			itemPanel.setPreferredSize(new java.awt.Dimension(320, 110));
+			centerTop.add(itemPanel);
+			itemPanel.setLayout(new java.awt.BorderLayout());
+			itemPanel.setBorder(new LineBorder(new Color(128, 128, 128)));
 			
-			sb = new StringBuilder();
-			sb.append(String.format("%-6s %4s %2s %4s", item.getName(),  item.getBuyCode(), "|" , item.getSellCode()));
+			javax.swing.JLabel lblCurrencyName = new javax.swing.JLabel("");
+			lblCurrencyName.setFont(new Font("Tahoma", Font.BOLD, 20));
+			lblCurrencyName.setPreferredSize(new java.awt.Dimension(220, 110));
+			lblCurrencyName.setHorizontalAlignment(SwingConstants.LEADING);
+			lblCurrencyName.setText(" " + item.getName());
+			lblCurrencyName.setIcon(new ImageIcon(getClass().getResource("/flag/" + item.getImage())));
 			
-			lblCurrency = new javax.swing.JLabel();
-			lblCurrency.setBorder(new LineBorder(new Color(0, 0, 0)));
-			lblCurrency.setFont(new Font("Tahoma", Font.BOLD, 20));
-			lblCurrency.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCurrency.setOpaque(true);
-			lblCurrency.setBackground(Color.WHITE);
-			lblCurrency.setPreferredSize(new java.awt.Dimension(320, 125));
-			lblCurrency.setText(sb.toString());
-			lblCurrency.setIcon(new ImageIcon(getClass().getResource("/flag/" + item.getImage())));
-			centerTop.add(lblCurrency);
+			itemPanelRight = new javax.swing.JPanel();
+			itemPanelRight.setPreferredSize(new java.awt.Dimension(100, 110));
+			itemPanelRight.setLayout(new java.awt.BorderLayout());
+			
+			itemPanel.add(lblCurrencyName, java.awt.BorderLayout.LINE_START);
+			itemPanel.add(itemPanelRight, java.awt.BorderLayout.LINE_END);
+			
+			javax.swing.JLabel lblBuyCode = new javax.swing.JLabel();
+			lblBuyCode.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			lblBuyCode.setPreferredSize(new java.awt.Dimension(120, 55));
+			lblBuyCode.setHorizontalAlignment(SwingConstants.CENTER);
+			lblBuyCode.setText(item.getBuyCode());
+			lblBuyCode.setBackground(new Color(152, 251, 152));
+			lblBuyCode.setOpaque(true);
+			
+			javax.swing.JLabel lblSellCode = new javax.swing.JLabel();
+			lblSellCode.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			lblSellCode.setPreferredSize(new java.awt.Dimension(120, 55));
+			lblSellCode.setHorizontalAlignment(SwingConstants.CENTER);
+			lblSellCode.setText(item.getSellCode());
+			lblSellCode.setBackground(new Color(240, 128, 128));
+			lblSellCode.setOpaque(true);
+			
+			itemPanelRight.add(lblBuyCode, java.awt.BorderLayout.NORTH);
+			itemPanelRight.add(lblSellCode, java.awt.BorderLayout.SOUTH);
 		}
 	}
 
@@ -375,11 +404,27 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	public void onSuccess(String success) {
 		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
 		JOptionPane.showMessageDialog(null, success, "Success", JOptionPane.ERROR_MESSAGE, icon);
+		textField.setText("");
 	}
 
 	@Override
 	public void onFail(String fail) {
 		final ImageIcon icon = new ImageIcon(getClass().getResource("/fail32.png"));
         JOptionPane.showMessageDialog(null, fail, "Alert", JOptionPane.ERROR_MESSAGE, icon);
+        textField.setText("");
+	}
+
+	@Override
+	public void onProcessCurrency() {
+		ProcessActivity processActivity = new ProcessActivity(MainActivity.this);
+		processActivity.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		if(processActivity.doModal() == SettingsActivity.ID_OK) {
+			System.out.println("modal");
+        } else {
+        	textField.setText("");
+        }
+		processActivity.setLocationRelativeTo(null);
+		processActivity.setModal(true);
+		
 	}
 }

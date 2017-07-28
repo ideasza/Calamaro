@@ -11,10 +11,12 @@ public interface MainInterface {
 		void onSuccess(String success);
 		void onFail(String fail);
 		void setCurrencyItem(ResultSet resultSet);
+		void onProcessCurrency();
 	}
 	
 	public interface Presenter {
 		void requestCurrency();
+		void getCurrency(String code);
 	}
 
 }
