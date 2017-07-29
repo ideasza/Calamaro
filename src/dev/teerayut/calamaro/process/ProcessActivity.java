@@ -74,18 +74,24 @@ public class ProcessActivity extends JDialog{
         createGUI();
     }
     
+    private javax.swing.JPanel topPanel;
     private javax.swing.JPanel centerPanel;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JPanel bottomPanel;
+    private javax.swing.JPanel panelDown;
+    private javax.swing.JPanel panelUp;
     private javax.swing.JButton button;
     private javax.swing.JScrollPane tableScroll;
     private javax.swing.JLabel lblTotal;
     private javax.swing.JLabel lblTotalAmount;
     javax.swing.JTable table;
     private void iniWidget() {
+    	topPanel = new javax.swing.JPanel();
     	centerPanel = new javax.swing.JPanel();
     	bottomPanel = new javax.swing.JPanel();
+    	panelDown = new javax.swing.JPanel();
+    	panelUp = new javax.swing.JPanel();
     	leftPanel = new javax.swing.JPanel();
     	rightPanel = new javax.swing.JPanel();
     	button = new javax.swing.JButton("OK");
@@ -113,20 +119,29 @@ public class ProcessActivity extends JDialog{
     	setTitle("CALAMARO");
     	setIconImage(new ImageIcon(getClass().getResource("/ic_calamaro.png")).getImage());
     	new ScreenCenter().centreWindow(this);
-    	getContentPane().setLayout(new java.awt.BorderLayout());
+    	getContentPane().setLayout(new java.awt.BorderLayout());   	
     	
-    	centerPanel.setPreferredSize(new java.awt.Dimension(800, 250));
+    	topPanel.setPreferredSize(new java.awt.Dimension(800, 25));
+    	getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
+    	
+    	centerPanel.setPreferredSize(new java.awt.Dimension(800, 200));
     	getContentPane().add(centerPanel, java.awt.BorderLayout.CENTER);
     	
-    	leftPanel.setPreferredSize(new java.awt.Dimension(10, 250));
+    	leftPanel.setPreferredSize(new java.awt.Dimension(10, 200));
     	getContentPane().add(leftPanel, java.awt.BorderLayout.WEST);
     	
-    	rightPanel.setPreferredSize(new java.awt.Dimension(10, 250));
+    	rightPanel.setPreferredSize(new java.awt.Dimension(10, 200));
     	getContentPane().add(rightPanel, java.awt.BorderLayout.EAST);
     	
-    	bottomPanel.setPreferredSize(new java.awt.Dimension(800, 35));
+    	bottomPanel.setPreferredSize(new java.awt.Dimension(800, 60));
     	getContentPane().add(bottomPanel, java.awt.BorderLayout.SOUTH);
     	bottomPanel.setLayout(new BorderLayout(0, 0));
+    	
+    	panelUp.setPreferredSize(new java.awt.Dimension(width, 20));
+    	bottomPanel.add(panelUp, java.awt.BorderLayout.NORTH);
+    	
+    	panelDown.setPreferredSize(new java.awt.Dimension(width, 10));
+    	bottomPanel.add(panelDown, java.awt.BorderLayout.SOUTH);
     	
     	javax.swing.JPanel panelLeft = new javax.swing.JPanel();
     	panelLeft.setPreferredSize(new java.awt.Dimension(10, 40));
@@ -186,8 +201,17 @@ public class ProcessActivity extends JDialog{
 	            	column = 2;
 	            	jc.requestFocus();
 	            	jc.requestFocusInWindow();
-	            	button.requestFocus();
-					button.requestFocusInWindow();
+	            	/*button.requestFocus();
+					button.requestFocusInWindow();*/
+	            	jc.addKeyListener(new KeyAdapter() {
+	        			@Override
+	        			public void keyPressed(KeyEvent e) {
+	        				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+	        					button.requestFocus();
+	        					button.requestFocusInWindow();
+	        				}
+	        			}
+	        		});
 	            }
 	            return c;
 	        }

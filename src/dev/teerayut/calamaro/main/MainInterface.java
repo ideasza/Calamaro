@@ -11,7 +11,7 @@ public interface MainInterface {
 		void onSuccess(String success);
 		void onFail(String fail);
 		void setCurrencyItem(ResultSet resultSet);
-		void onProcessCurrency();
+		void onProcessCurrency(ResultSet resultSet);
 	}
 	
 	public interface Presenter {

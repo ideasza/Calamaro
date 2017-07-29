@@ -31,6 +31,7 @@ import javax.swing.event.ChangeListener;
 import dev.teerayut.calamaro.model.CurrencyItem;
 import dev.teerayut.calamaro.process.ProcessActivity;
 import dev.teerayut.calamaro.settings.SettingsActivity;
+import dev.teerayut.calamaro.update.UpdateActivity;
 import dev.teerayut.calamaro.utils.Config;
 import dev.teerayut.calamaro.utils.Preferrence;
 import dev.teerayut.calamaro.utils.ScreenCenter;
@@ -65,8 +66,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	
 	private static String code;
 	private CurrencyItem item;
-	private List<CurrencyItem> currencyItems = new ArrayList<CurrencyItem>();
-	private static List<CurrencyItem> currencyItemsList = new ArrayList<CurrencyItem>();
+	private List<CurrencyItem> currencyItems;
+	private static List<CurrencyItem> currencyItemsList;
 
 	/**
 	 * Launch the application.
@@ -270,19 +271,12 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		edit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				/*updateCurrencyActivity update = new updateCurrencyActivity(MainActivity.this);
-				if(update.doModal() == updateCurrencyActivity.ID_OK) {
-					for (int i = model.getRowCount() - 1; i >= 0; i--) {
-					    model.removeRow(i);
-					}
-					for (int i = modelSell.getRowCount() - 1; i >= 0; i--) {
-					    modelSell.removeRow(i);
-					}
-		        } else {
-		        	buyRate();
-		        }
+				UpdateActivity update = new UpdateActivity(MainActivity.this);
+				if(update.doModal() == UpdateActivity.ID_OK) {
+					
+		        } 
 				update.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				update.setModal(true);*/
+				update.setModal(true);
 			}
 		});
 		menu.add(edit);
@@ -330,6 +324,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 
 	@Override
 	public void setCurrencyItem(ResultSet resultSet) {
+		currencyItems = new ArrayList<>();
 		try {
 			while(resultSet.next()) {
 				item = new CurrencyItem();
@@ -356,7 +351,6 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	}
 	
 	private void generateItem(List<CurrencyItem> listItem) {
-		this.currencyItemsList = listItem;
 		for (int i = 0; i < listItem.size(); i++) {
 			CurrencyItem item = listItem.get(i);			
 			itemPanel = new javax.swing.JPanel();
@@ -415,7 +409,25 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	}
 
 	@Override
-	public void onProcessCurrency() {
+	public void onProcessCurrency(ResultSet resultSet) {
+		this.currencyItemsList = new ArrayList<CurrencyItem>();
+		try {
+			while(resultSet.next()) {
+				item = new CurrencyItem();
+				item.setName(resultSet.getString("currency_name").trim().toString());
+				item.setBuyRate(resultSet.getString("currency_buy_rate").trim().toString());
+				item.setSellRate(resultSet.getString("currency_sell_rate").trim().toString());
+				item.setBuyCode(resultSet.getString("currency_buy_code").trim().toString());
+				item.setSellCode(resultSet.getString("currency_sell_code").trim().toString());
+				this.currencyItemsList.add(item);
+			}
+			processDialog();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void processDialog() {
 		ProcessActivity processActivity = new ProcessActivity(MainActivity.this);
 		processActivity.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		if(processActivity.doModal() == SettingsActivity.ID_OK) {
@@ -425,6 +437,5 @@ public class MainActivity extends JFrame implements MainInterface.View{
         }
 		processActivity.setLocationRelativeTo(null);
 		processActivity.setModal(true);
-		
 	}
 }
