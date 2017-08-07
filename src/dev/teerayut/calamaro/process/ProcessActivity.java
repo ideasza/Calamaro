@@ -1,50 +1,44 @@
 package dev.teerayut.calamaro.process;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
-import javax.swing.AbstractCellEditor;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import dev.teerayut.calamaro.main.MainActivity;
 import dev.teerayut.calamaro.model.CurrencyItem;
 import dev.teerayut.calamaro.utils.Convert;
+import dev.teerayut.calamaro.utils.DateFormate;
 import dev.teerayut.calamaro.utils.ScreenCenter;
 
-import java.awt.Font;
-import java.awt.BorderLayout;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-
-import java.awt.Color;
-import java.awt.Component;
-
-import javax.swing.ListSelectionModel;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
-public class ProcessActivity extends JDialog{
+public class ProcessActivity extends JDialog implements ProcessInterface.View{
 
 	private int exitCode = ID_CANCEL;
 	public static final int ID_OK = 1;
@@ -58,6 +52,10 @@ public class ProcessActivity extends JDialog{
     private int columns;
     private String currencyCode;
     private List<CurrencyItem> currencyItemList = new ArrayList<CurrencyItem>();
+    
+    private static final String prefixName = "CMR";
+	private String receiptNumber = null;
+    private ProcessInterface.Presenter presenter;
     
     public ProcessActivity(Frame owner) {
         super(owner);
@@ -87,6 +85,7 @@ public class ProcessActivity extends JDialog{
     private javax.swing.JLabel lblTotalAmount;
     javax.swing.JTable table;
     private void iniWidget() {
+    	presenter = new ProcessPresenter(this);
     	topPanel = new javax.swing.JPanel();
     	centerPanel = new javax.swing.JPanel();
     	bottomPanel = new javax.swing.JPanel();
@@ -101,6 +100,7 @@ public class ProcessActivity extends JDialog{
     		public void keyPressed(KeyEvent e) {
     			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					JOptionPane.showMessageDialog(ProcessActivity.this, lblTotalAmount.getText().toString());
+					//presenter.insertReceipt(calculateList);
 				}
     		}
     	});
@@ -168,6 +168,8 @@ public class ProcessActivity extends JDialog{
     	bottomPanel.add(panelRight, java.awt.BorderLayout.LINE_END);
     	
     	createTable();
+    	presenter.getLastKey();
+    	System.out.println(receiptNumber);
     }
     
     private void createTable() {
@@ -191,27 +193,13 @@ public class ProcessActivity extends JDialog{
 	        public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
 	            Component c = super.prepareRenderer(renderer, row, column);
 	            JComponent jc = (JComponent) c;
-	            /*if (isRowSelected(row)) {
-	                jc.setBackground(Color.orange);
-	                jc.setBorder(highlight);
-	            } else {
-	                jc.setBackground(Color.white);
-	            }*/
 	            if (isColumnSelected(2)) {
 	            	column = 2;
 	            	jc.requestFocus();
 	            	jc.requestFocusInWindow();
-	            	/*button.requestFocus();
-					button.requestFocusInWindow();*/
-	            	jc.addKeyListener(new KeyAdapter() {
-	        			@Override
-	        			public void keyPressed(KeyEvent e) {
-	        				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-	        					button.requestFocus();
-	        					button.requestFocusInWindow();
-	        				}
-	        			}
-	        		});
+	            } else if (isColumnSelected(3)) {
+	            	button.requestFocus();
+					button.requestFocusInWindow();
 	            }
 	            return c;
 	        }
@@ -236,9 +224,9 @@ public class ProcessActivity extends JDialog{
 		});
 		
 		table.requestFocus();
-		table.editCellAt(0, 2);
-		table.setColumnSelectionAllowed(true);		
+		table.setColumnSelectionAllowed(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.editCellAt(0, 2);
 		table.changeSelection(0, 2, true, false);
 		tableScroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		tableScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -270,7 +258,26 @@ public class ProcessActivity extends JDialog{
 		table.getColumnModel().getColumn(1).setCellRenderer(rightRender);
 		table.getColumnModel().getColumn(2).setCellRenderer(rightRender);
 		table.getColumnModel().getColumn(3).setCellRenderer(rightRender);
-		table.requestFocusInWindow();
+		Action handleEnter = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                //table.getCellEditor().stopCellEditing();
+                int row = table.getSelectedRow();
+                int col = table.getSelectedColumn();
+                if (row == 0 && col == 3) {
+                	button.requestFocus();
+					button.requestFocusInWindow();
+					button.doClick();
+                } else {
+                	//table.getCellEditor().stopCellEditing();
+                	table.changeSelection(row, col, false, false);
+                	table.editCellAt(row, col);
+                }
+               
+            }
+        };
+		
+		table.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "handleEnter");
+        table.getActionMap().put("handleEnter", handleEnter);
 		
 		getItem();
     }
@@ -313,5 +320,50 @@ public class ProcessActivity extends JDialog{
         setVisible(true);
         return exitCode;
     }
+
+	@Override
+	public void onSuccess(String success) {
+		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
+		JOptionPane.showMessageDialog(null, success, "Success", JOptionPane.INFORMATION_MESSAGE, icon);
+		
+	}
+
+	@Override
+	public void onFail(String fail) {
+		final ImageIcon icon = new ImageIcon(getClass().getResource("/fail32.png"));
+        JOptionPane.showMessageDialog(null, fail, "Alert", JOptionPane.ERROR_MESSAGE, icon);
+	}
+
+	@Override
+	public void onGenerateKey(ResultSet result) {
+		try {
+			if (result.next()) {
+				receiptNumber = generateKey(result.getString("RC_NUMBER"));
+			} 
+		} catch (Exception e) {
+			receiptNumber = generateKey(null);
+			System.out.println("No number!" + receiptNumber);
+		}
+	}
+	
+	private String generateKey(String lastkey) {
+		String[] key;
+		String prefixKey;
+		int running;
+		String generateNumber = null;
+		
+		if (lastkey != null) {
+			key = lastkey.split("-");
+			prefixKey = key[0];
+			running = Integer.parseInt(key[1]);
+			running++;
+			generateNumber = prefixKey + "-" + String.format("%04d", running);
+		} else {
+			running = 0000;
+			running++;
+			generateNumber = prefixName + new DateFormate().getDateForBill() + "-" + String.format("%04d", running);
+		}
+		return generateNumber;
+	}
 }
 

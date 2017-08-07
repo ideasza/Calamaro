@@ -47,12 +47,12 @@ public class MainPresenter implements MainInterface.Presenter {
 		connectionDB = new ConnectionDB();
 		try {
 			resultSet = connectionDB.dbQuery(sb.toString());
-			view.onProcessCurrency(resultSet);
-			/*if (resultSet.next()) {
+			//view.onProcessCurrency(resultSet);
+			if (resultSet.isBeforeFirst()) {
 				view.onProcessCurrency(resultSet);
 			} else {
 				view.onFail("Fail : data not found (" + code + ")");
-			}*/
+			}
 		} catch(Exception e) {
 			resultSet = null;
 			//System.out.println(e.getSQLState());

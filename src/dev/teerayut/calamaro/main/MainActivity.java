@@ -1,9 +1,6 @@
 package dev.teerayut.calamaro.main;
 
-import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -12,45 +9,43 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Toolkit;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import dev.teerayut.calamaro.model.CurrencyItem;
-import dev.teerayut.calamaro.process.ProcessActivity;
-import dev.teerayut.calamaro.settings.SettingsActivity;
-import dev.teerayut.calamaro.update.UpdateActivity;
-import dev.teerayut.calamaro.utils.Config;
-import dev.teerayut.calamaro.utils.Preferrence;
-import dev.teerayut.calamaro.utils.ScreenCenter;
-
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.border.TitledBorder;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+
+import dev.teerayut.calamaro.model.CurrencyItem;
+import dev.teerayut.calamaro.process.ProcessActivity;
+import dev.teerayut.calamaro.settings.SettingsActivity;
+import dev.teerayut.calamaro.show.ShowActivity;
+import dev.teerayut.calamaro.update.UpdateActivity;
+import dev.teerayut.calamaro.utils.Config;
+import dev.teerayut.calamaro.utils.DateFormate;
+import dev.teerayut.calamaro.utils.Preferrence;
+import dev.teerayut.calamaro.utils.ScreenCenter;
 
 
 public class MainActivity extends JFrame implements MainInterface.View{
@@ -63,7 +58,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	private Preferrence prefs;
 	private MainPresenter presenter;
 	private StringBuilder sb;
-	
+	private ShowActivity sc;
 	private static String code;
 	private CurrencyItem item;
 	private List<CurrencyItem> currencyItems;
@@ -101,12 +96,13 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	private javax.swing.JPanel leftInnerCenter;
 	private javax.swing.JPanel rightInnerCenter;
 	
-	private javax.swing.JTextField textField;
+	private static javax.swing.JTextField textField;
 
 	private javax.swing.JLabel lblCompanyName;
 	private javax.swing.JLabel lblCoID;
 	
 	private javax.swing.JLabel lblSource;
+	private javax.swing.JLabel lblTime;
 	
 	private void initWidget() {
 		presenter = new MainPresenter(this);
@@ -137,6 +133,17 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		lblCompanyName = new javax.swing.JLabel();
 		lblCoID = new javax.swing.JLabel();
 		lblSource = new javax.swing.JLabel();
+		lblTime = new javax.swing.JLabel();
+	}
+	
+	private void setTime(JLabel lbTime) {
+		Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+            	lbTime.setText(new DateFormate().getDateWithTime());
+            }
+        }, 0, 1000);
 	}
 	
 	private void getScreenPoint() {	
@@ -157,12 +164,17 @@ public class MainActivity extends JFrame implements MainInterface.View{
 			@Override
 			public void windowOpened(WindowEvent e) {
 				prefs = new Preferrence();
+				sc = new ShowActivity();
 				File database = new File(Config.DB_PATH + Config.DB_FILE);
 				if (database.exists()) {
 					prefs.setPreferrence("settings_open", "1");
 					lblSource.setText(" jdbc:sqlite: " + new File(Config.DB_PATH + Config.DB_FILE).getAbsolutePath().toString());
 	                lblSource.setIcon(new ImageIcon(getClass().getResource("/database_connect.png")));
 	        		presenter.requestCurrency();
+	        		if (!sc.isShowing()) {
+						sc.setLocation(moniter2);
+			            sc.setVisible(true);
+					}
 				} else {
 					prefs.setPreferrence("settings_open", "0");
 					edit.setEnabled(false);
@@ -199,6 +211,12 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		bottomPanel.setLayout(new java.awt.BorderLayout());
 		getContentPane().add(bottomPanel, java.awt.BorderLayout.SOUTH);
 		
+		lblTime.setForeground(new Color(0, 51, 102));
+		lblTime.setFont(new Font("Angsana New", Font.BOLD, 24));
+		lblTime.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+		setTime(lblTime);
+		bottomPanel.add(lblTime, java.awt.BorderLayout.LINE_START);
+		
 		lblSource.setForeground(new Color(0, 51, 102));
 		lblSource.setFont(new Font("Angsana New", Font.BOLD, 24));
 		lblSource.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -216,6 +234,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		
 		topPanel();
 		centerPanel();
+		pack();
+		setLocationRelativeTo(null);
 	}
 	
 	private void topPanel() {
@@ -397,7 +417,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	@Override
 	public void onSuccess(String success) {
 		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
-		JOptionPane.showMessageDialog(null, success, "Success", JOptionPane.ERROR_MESSAGE, icon);
+		JOptionPane.showMessageDialog(null, success, "Success", JOptionPane.INFORMATION_MESSAGE, icon);
 		textField.setText("");
 	}
 

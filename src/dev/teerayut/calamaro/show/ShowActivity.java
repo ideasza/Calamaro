@@ -4,16 +4,21 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
+import javax.swing.border.MatteBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -37,7 +42,7 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 	private int numOfpage = 0;
 	private int page = 0;
 	private int startIndex;
-	
+	private int w, h;
 	private int width, height;
 
 	/**
@@ -70,25 +75,47 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 	private javax.swing.JScrollPane scrollPane;
 	private void initWidget() {
 		topPanel = new javax.swing.JPanel();
+		topPanel.setFocusable(false);
+		topPanel.setFocusTraversalKeysEnabled(false);
 		Leftpanel = new javax.swing.JPanel();
+		Leftpanel.setFocusable(false);
+		Leftpanel.setFocusTraversalKeysEnabled(false);
 		Rightpanel = new javax.swing.JPanel();
+		Rightpanel.setFocusTraversalKeysEnabled(false);
+		Rightpanel.setFocusable(false);
 		Bottompanel = new javax.swing.JPanel();
+		Bottompanel.setFocusable(false);
+		Bottompanel.setFocusTraversalKeysEnabled(false);
 		scrollPane = new javax.swing.JScrollPane();
+		scrollPane.setFocusable(false);
+		scrollPane.setFocusTraversalKeysEnabled(false);
 		table = new javax.swing.JTable() {
 			 protected JTableHeader createDefaultTableHeader() {
 		          return new GroupableTableHeader(columnModel);
 		      }
 		};
+		table.setFocusTraversalKeysEnabled(false);
 		
 		lblCompanyName = new javax.swing.JLabel();
+		lblCompanyName.setFocusTraversalKeysEnabled(false);
+		lblCompanyName.setFocusable(false);
 	}
 	
 	public ShowActivity() {
+		getContentPane().setFocusable(false);
+		getContentPane().setFocusTraversalKeysEnabled(false);
+		setFocusTraversalKeysEnabled(false);
+		setFocusCycleRoot(false);
+		setFocusableWindowState(false);
+		setFocusable(false);
 		presenter = new ShowPresenter(this);
 		setResizable(false);
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		width = (int) dimension.getWidth();
 		height = (int) dimension.getHeight();
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		h = gd.getDisplayMode().getHeight();
+		w = gd.getDisplayMode().getWidth();
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
 		setPreferredSize(new java.awt.Dimension(width, height));
@@ -99,7 +126,7 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		initWidget();
 
 		topPanel.setBackground(new Color(255, 204, 102));
-		topPanel.setPreferredSize(new java.awt.Dimension(width, 5));
+		topPanel.setPreferredSize(new java.awt.Dimension(width, 170));
 		getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
 		
 		Leftpanel.setBackground(new Color(255, 204, 102));
@@ -112,14 +139,14 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		
 		getContentPane().add(scrollPane, java.awt.BorderLayout.CENTER);
 		
-		Bottompanel.setPreferredSize(new java.awt.Dimension(width, 200));
+		Bottompanel.setPreferredSize(new java.awt.Dimension(width, 5));
 		getContentPane().add(Bottompanel, java.awt.BorderLayout.SOUTH);
 		Bottompanel.setBackground(new Color(255, 204, 102));
 		
 		lblCompanyName.setForeground(new Color(0, 0, 0));
 		lblCompanyName.setFont(new Font("Angsana New", Font.BOLD, 70));
 		lblCompanyName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-		Bottompanel.add(lblCompanyName, java.awt.BorderLayout.CENTER);
+		topPanel.add(lblCompanyName, java.awt.BorderLayout.CENTER);
 		lblCompanyName.setIcon(new ImageIcon(getClass().getResource("/ic_calamaro.png")));
 		lblCompanyName.setText("CALAMARO EXCHANGE CO.,LTD.");
 		
@@ -175,26 +202,20 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 			});
 		}
 		table.setModel(model);
-		table.setFont(new Font("Angsana New", Font.BOLD, 50));
+		table.setFont(new Font("Tahoma", Font.BOLD, 50));
 		
-		int screenHeight = (int) this.getSize().getHeight();
-		int bottomHeight = (int) Bottompanel.getSize().getHeight();
-		int scrollWidth = (int) this.getSize().getWidth();
-		int colWidth = (scrollWidth - 80);
-		int columnsWidth = (width / 4);;
-		columnsWidth = (colWidth / 5);
-		int smCol = (columnsWidth / 4);
-		int mdCol = (columnsWidth / 2);
-		int rowHeight = (screenHeight - 200) + 5;
-		int columnsW = (columnsWidth / 2);
-    	JTableHeader header = table.getTableHeader();
-    	header.setPreferredSize(new Dimension(columnsWidth, (rowHeight / 13)));
+		int screenHeight = h;
+		int scrollWidth = w;
+		int colWidth = (scrollWidth - 30);
+		int columnsWidth = (w / 6);
+		int smCol = (columnsWidth / 8);
+		int mdCol = (columnsWidth / 4);
+		int rowHeight = screenHeight;
     	
     	TableColumnModel cm = table.getColumnModel();
         ColumnGroup g_name = new ColumnGroup("Currency");
         g_name.add(cm.getColumn(0));
         g_name.add(cm.getColumn(1));
-       
         ColumnGroup g_buyrate = new ColumnGroup("Buy");
         g_buyrate.add(cm.getColumn(2));
         ColumnGroup g_sellrate = new ColumnGroup("Sell");
@@ -205,28 +226,40 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
         groupHeader.addColumnGroup(g_buyrate);
         groupHeader.addColumnGroup(g_sellrate);
     	
-		table.getTableHeader().setFont(new Font("Angsana New", Font.BOLD, 60));
-		//table.getTableHeader().setBackground(Color.WHITE);
-		table.getTableHeader().setForeground(new Color(0, 51, 102));
+		table.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 60));
 		table.getTableHeader().setReorderingAllowed(false);
 		table.getTableHeader().setResizingAllowed(false);
 		
-		table.getColumnModel().getColumn(0).setPreferredWidth(columnsWidth - mdCol);
-		table.getColumnModel().getColumn(1).setPreferredWidth(columnsWidth + smCol);
-		table.getColumnModel().getColumn(2).setPreferredWidth(columnsWidth + mdCol);
-		table.getColumnModel().getColumn(3).setPreferredWidth(columnsWidth + mdCol);
-		table.setRowHeight(rowHeight / 14);
+		table.getColumnModel().getColumn(0).setPreferredWidth(columnsWidth - (mdCol + smCol) );
+		table.getColumnModel().getColumn(1).setPreferredWidth(columnsWidth + (smCol * 2));
+		table.getColumnModel().getColumn(2).setPreferredWidth(columnsWidth + smCol);
+		table.getColumnModel().getColumn(3).setPreferredWidth(columnsWidth + smCol);
+		table.setRowHeight(rowHeight / 7);
 		
-		DefaultTableCellRenderer centerRender = new DefaultTableCellRenderer();
+		/*DefaultTableCellRenderer centerRender = new DefaultTableCellRenderer();
 		centerRender.setHorizontalAlignment(JLabel.CENTER);
 		table.getColumnModel().getColumn(2).setCellRenderer(centerRender);
-		table.getColumnModel().getColumn(3).setCellRenderer(centerRender);
+		table.getColumnModel().getColumn(3).setCellRenderer(centerRender);*/
+		
+		DefaultTableCellRenderer renderrerG = new DefaultTableCellRenderer();
+		renderrerG.setHorizontalAlignment(JLabel.CENTER);
+		renderrerG.setForeground(Color.GREEN);
+		renderrerG.setBackground(Color.BLACK);
+		table.getColumnModel().getColumn(2).setCellRenderer(renderrerG);
+		
+		DefaultTableCellRenderer renderrerR = new DefaultTableCellRenderer();
+		renderrerR.setHorizontalAlignment(JLabel.CENTER);
+		renderrerR.setForeground(Color.RED);
+		renderrerR.setBackground(Color.BLACK);
+		table.getColumnModel().getColumn(3).setCellRenderer(renderrerR);
 		
 		DefaultTableCellRenderer leftRender = new DefaultTableCellRenderer();
-		leftRender.setHorizontalAlignment(JLabel.LEFT);
+		leftRender.setHorizontalAlignment(JLabel.CENTER);
+		leftRender.setFont(new Font("Tahoma", Font.BOLD, 100));
 		table.getColumnModel().getColumn(1).setCellRenderer(leftRender);
 		
 		table.getColumnModel().getColumn(0).setCellRenderer(new tableImageRenderrer());
+		
 	}
 
 }
