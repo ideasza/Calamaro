@@ -39,6 +39,7 @@ import javax.swing.border.TitledBorder;
 
 import dev.teerayut.calamaro.model.CurrencyItem;
 import dev.teerayut.calamaro.process.ProcessActivity;
+import dev.teerayut.calamaro.report.ReportActivity;
 import dev.teerayut.calamaro.settings.SettingsActivity;
 import dev.teerayut.calamaro.show.ShowActivity;
 import dev.teerayut.calamaro.update.UpdateActivity;
@@ -305,10 +306,10 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		report.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				/*ReportActivity report = new ReportActivity(MainActivity.this);
+				ReportActivity report = new ReportActivity(MainActivity.this);
 				if(report.doModal() == ReportActivity.ID_OK) {}
 				report.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				report.setModal(true);*/
+				report.setModal(true);
 			}
 		});
 		menu.add(report);

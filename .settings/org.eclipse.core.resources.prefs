@@ -2,6 +2,7 @@ eclipse.preferences.version=1
 encoding//src/dev/teerayut/calamaro/main/MainActivity.java=UTF-8
 encoding//src/dev/teerayut/calamaro/process/ProcessActivity.java=UTF-8
 encoding//src/dev/teerayut/calamaro/process/ProcessPresenter.java=UTF-8
+encoding//src/dev/teerayut/calamaro/report/ReportActivity.java=UTF-8
 encoding//src/dev/teerayut/calamaro/settings/SettingsActivity.java=UTF-8
 encoding//src/dev/teerayut/calamaro/update/UpdatePresenter.java=UTF-8
 encoding//src/dev/teerayut/calamaro/utils/Preferrence.java=UTF-8

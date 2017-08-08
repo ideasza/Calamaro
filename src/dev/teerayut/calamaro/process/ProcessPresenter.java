@@ -19,6 +19,15 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 	}
 	@Override
 	public void insertReceipt(List<CalculateModel> calculateList) {
+		/*for (int i = 0; i < calculateList.size(); i++) {
+			System.out.println(calculateList.get(i).getReportNumber() + ", " 
+					+ calculateList.get(i).getReportType() + ", "
+					+ calculateList.get(i).getReportBuyRate() + ", " 
+					+ calculateList.get(i).getReportSellRate() + ", "
+					+ calculateList.get(i).getReportAmount() + ", "
+					+ calculateList.get(i).getReportTotal());
+		}
+		view.onSuccess("บันทึกรายการซื้อขายแล้ว");*/
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
 		
@@ -56,7 +65,6 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 			System.out.println(e.getMessage());
 			connectionDB.closeAllTransaction();
 		}
-		
 	}
 	@Override
 	public void getLastKey() {

@@ -33,10 +33,15 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
 import dev.teerayut.calamaro.main.MainActivity;
+import dev.teerayut.calamaro.model.CalculateModel;
 import dev.teerayut.calamaro.model.CurrencyItem;
 import dev.teerayut.calamaro.utils.Convert;
 import dev.teerayut.calamaro.utils.DateFormate;
 import dev.teerayut.calamaro.utils.ScreenCenter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ProcessActivity extends JDialog implements ProcessInterface.View{
 
@@ -50,8 +55,12 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     private Object[] columName = {"สกุลเงิน", "เรท", "จำนวน", "รวม"};
 	
     private int columns;
+    private String currecyType;
     private String currencyCode;
     private List<CurrencyItem> currencyItemList = new ArrayList<CurrencyItem>();
+    
+    private CalculateModel calculateModel;
+    private List<CalculateModel> calculateModelList = new ArrayList<CalculateModel>();
     
     private static final String prefixName = "CMR";
 	private String receiptNumber = null;
@@ -67,6 +76,17 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
      */
     public ProcessActivity(Dialog owner) {
         super(owner);        
+        addWindowListener(new WindowAdapter() {
+        	@Override
+        	public void windowOpened(WindowEvent e) {
+        		/*table.getCellEditor().stopCellEditing();
+        		int row = table.getSelectedRow();
+                int col = table.getSelectedColumn();*/
+                table.changeSelection(0, 2, false, false);
+            	table.editCellAt(0, 2);
+            	table.setValueAt("0", 0, 2);
+        	}
+        });
         setFocusableWindowState(false);
         setFocusable(false);
         createGUI();
@@ -94,14 +114,47 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     	leftPanel = new javax.swing.JPanel();
     	rightPanel = new javax.swing.JPanel();
     	button = new javax.swing.JButton("OK");
+    	/*button.addMouseListener(new MouseAdapter() {
+    		@Override
+    		public void mouseClicked(MouseEvent e) {
+    			int row = table.getRowCount();
+				for (int i = 0; i < row; i++) {
+					calculateModel = new CalculateModel()
+							.setReportNumber(receiptNumber)
+							.setReportType(currecyType)
+							.setReportBuyRate(table.getValueAt(i, 1).toString())
+							.setReportSellRate(currencyItemList.get(i).getSellRate())
+							.setReportAmount(table.getValueAt(i, 2).toString())
+							.setReportTotal(lblTotalAmount.getText().toString());
+				}
+				calculateModelList.add(calculateModel);
+				presenter.insertReceipt(calculateModelList);
+    		}
+    	});*/
+    	
     	button.setHorizontalTextPosition(SwingConstants.CENTER);
     	button.addKeyListener(new KeyAdapter() {
     		@Override
     		public void keyPressed(KeyEvent e) {
-    			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					JOptionPane.showMessageDialog(ProcessActivity.this, lblTotalAmount.getText().toString());
-					//presenter.insertReceipt(calculateList);
-				}
+    			try {
+	    			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+						int row = table.getRowCount();
+						for (int i = 0; i < row; i++) {
+							calculateModel = new CalculateModel()
+									.setReportNumber(receiptNumber)
+									.setReportType(currecyType)
+									.setReportCurrency(table.getValueAt(i, 0).toString())
+									.setReportBuyRate(table.getValueAt(i, 1).toString())
+									.setReportSellRate(currencyItemList.get(i).getSellRate())
+									.setReportAmount(table.getValueAt(i, 2).toString())
+									.setReportTotal(table.getValueAt(i, 3).toString().replaceAll(",", ""));
+						}
+						calculateModelList.add(calculateModel);
+						presenter.insertReceipt(calculateModelList);
+					}
+    			} catch (Exception ex) {
+    				System.out.println("Error : " + ex.getMessage());
+    			}
     		}
     	});
     	button.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -112,7 +165,6 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     
     private void createGUI() {
     	iniWidget();
-    	//getItem();
     	int width = 840;
     	int height = 410;
     	setBounds(0, 0, 680, 320);
@@ -168,11 +220,12 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     	bottomPanel.add(panelRight, java.awt.BorderLayout.LINE_END);
     	
     	createTable();
-    	presenter.getLastKey();
-    	System.out.println(receiptNumber);
+    	//System.out.println("Number: " + receiptNumber);
     }
     
     private void createTable() {
+    	lblTotalAmount.setText("0.00");
+    	calculateModelList.clear();
     	model = new DefaultTableModel(data, columName);
 		centerPanel.setLayout(new BorderLayout(0, 0));
 		table = new javax.swing.JTable(model) {
@@ -208,17 +261,25 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 		table.getModel().addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
-				if(e.getType()==(TableModelEvent.UPDATE)) {
-					int col = e.getColumn();
-					int row = e.getFirstRow();
-					float rate = Float.parseFloat(table.getValueAt(row, 1).toString());
-					float amount = Float.parseFloat(table.getValueAt(row, 2).toString());
-					float sum = (rate * amount);
-					
-					calculate(table, lblTotalAmount);
-					if (col == 2) {
-						table.setValueAt(new Convert().formatDecimal(sum), row, 3);
-		            }
+				try {
+					if(e.getType()==(TableModelEvent.UPDATE)) {
+						int col = e.getColumn();
+						int row = e.getFirstRow();
+						float rate = Float.parseFloat(table.getValueAt(row, 1).toString());
+						float amount = Float.parseFloat(table.getValueAt(row, 2).toString());
+						float sum = (rate * amount);
+						
+						calculate(table, lblTotalAmount);
+						if (col == 2) {
+							table.setValueAt(new Convert().formatDecimal(sum), row, 3);
+			            } else if (col == 3) {
+			            	button.requestFocus();
+							button.requestFocusInWindow();
+							button.doClick();
+			            }
+					}
+				} catch (Exception ex) {
+					System.out.println("Error : " + ex.getMessage());
 				}
 			}
 		});
@@ -258,28 +319,29 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 		table.getColumnModel().getColumn(1).setCellRenderer(rightRender);
 		table.getColumnModel().getColumn(2).setCellRenderer(rightRender);
 		table.getColumnModel().getColumn(3).setCellRenderer(rightRender);
-		Action handleEnter = new AbstractAction() {
+
+		/*Action handleEnter = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                //table.getCellEditor().stopCellEditing();
+                table.getCellEditor().stopCellEditing();
                 int row = table.getSelectedRow();
                 int col = table.getSelectedColumn();
-                if (row == 0 && col == 3) {
+                if (row == 0 && col == 2) {
                 	button.requestFocus();
 					button.requestFocusInWindow();
 					button.doClick();
                 } else {
-                	//table.getCellEditor().stopCellEditing();
                 	table.changeSelection(row, col, false, false);
                 	table.editCellAt(row, col);
+                	table.getCellEditor().stopCellEditing();
                 }
-               
             }
         };
 		
 		table.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "handleEnter");
-        table.getActionMap().put("handleEnter", handleEnter);
+        table.getActionMap().put("handleEnter", handleEnter);*/
 		
 		getItem();
+		presenter.getLastKey();
     }
     
     private void getItem() {
@@ -291,14 +353,16 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     private void setItemToTable() {
     	for (CurrencyItem item : currencyItemList) {
     		if (currencyCode.equals(item.getBuyCode())) {
+    			this.currecyType = "Buy";
     			model.addRow(new Object[] {item.getName(), new Convert().formatDecimal(Float.parseFloat(item.getBuyRate())), "", "0.00"});
     		} else if (currencyCode.equals(item.getSellCode())) {
+    			this.currecyType = "Sell";
     			model.addRow(new Object[] {item.getName(), new Convert().formatDecimal(Float.parseFloat(item.getSellRate())), "", "0.00"});
     		}
     	}
     }
     
-    public void calculate(JTable table, JLabel lblTotal) {
+    public void calculate(JTable table, JLabel labelParameter) {
 		int rowCounth = table.getRowCount();
 	    float sum = 0;
 	    float value = 0;
@@ -306,7 +370,7 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 	    	value = Float.parseFloat(table.getValueAt(i, 3).toString().replaceAll(",", ""));
 	    	sum += value;
 	    }
-	    lblTotal.setText(String.valueOf(new Convert().formatDecimal(sum)));
+	    labelParameter.setText(String.valueOf(new Convert().formatDecimal(sum)));
 	}
     
     @Override
@@ -325,7 +389,9 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 	public void onSuccess(String success) {
 		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
 		JOptionPane.showMessageDialog(null, success, "Success", JOptionPane.INFORMATION_MESSAGE, icon);
-		
+		/*table.changeSelection(0, 2, false, false);
+    	table.editCellAt(0, 2);*/
+		createTable();
 	}
 
 	@Override
@@ -338,8 +404,10 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 	public void onGenerateKey(ResultSet result) {
 		try {
 			if (result.next()) {
-				receiptNumber = generateKey(result.getString("RC_NUMBER"));
-			} 
+				receiptNumber = generateKey(result.getString("report_number"));
+			} else {
+				receiptNumber = generateKey(null);
+			}
 		} catch (Exception e) {
 			receiptNumber = generateKey(null);
 			System.out.println("No number!" + receiptNumber);
