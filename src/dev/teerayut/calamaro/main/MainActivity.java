@@ -172,10 +172,10 @@ public class MainActivity extends JFrame implements MainInterface.View{
 					lblSource.setText(" jdbc:sqlite: " + new File(Config.DB_PATH + Config.DB_FILE).getAbsolutePath().toString());
 	                lblSource.setIcon(new ImageIcon(getClass().getResource("/database_connect.png")));
 	        		presenter.requestCurrency();
-	        		if (!sc.isShowing()) {
+	        		/*if (!sc.isShowing()) {
 						sc.setLocation(moniter2);
 			            sc.setVisible(true);
-					}
+					}*/
 				} else {
 					prefs.setPreferrence("settings_open", "0");
 					edit.setEnabled(false);

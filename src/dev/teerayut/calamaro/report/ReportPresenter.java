@@ -15,10 +15,8 @@ public class ReportPresenter implements ReportInterface.Presenter {
 	
 	private ResultSet resultSet;
 	private ConnectionDB connectionDB;
-	private ReportModel reportModel;
 	private CalculateModel calculateModel;
 	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private List<ReportModel> reportModels = new ArrayList<ReportModel>();
 	private List<CalculateModel> calculateModelsList = new ArrayList<CalculateModel>();
 	
 	
@@ -29,30 +27,37 @@ public class ReportPresenter implements ReportInterface.Presenter {
 	
 	@Override
 	public void getReport(String date) {
+		calculateModelsList.clear();
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
 		sb.append("SELECT * FROM Report ");
-		sb.append("WHERE report_date like '"+ date +"%' ORDER BY report_id ASC");
+		sb.append("WHERE report_date LIKE '"+ date +"%' ORDER BY report_id ASC");
 		connectionDB = new ConnectionDB();
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
 			resultSet = connectionDB.dbQuery(sb.toString());
 			while(resultSet.next()) {
-				reportModel = new ReportModel()
+				calculateModel = new CalculateModel()
 						.setReportNumber(resultSet.getString("report_number"))
-						//.setReportDate(resultSet.getDate("report_date"))
-						.setReportDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(resultSet.getString("report_date")))
+						.setReportDate(resultSet.getString("report_date"))
 						.setReportType(resultSet.getString("report_type"))
 						.setReportCurrency(resultSet.getString("report_currency"))
 						.setReportBuyRate(resultSet.getString("report_buy_rate"))
 						.setReportSellRate(resultSet.getString("report_sell_rate"))
 						.setReportAmount(resultSet.getString("report_amount"))
 						.setReportTotal(resultSet.getString("report_total"));
-				reportModels.add(reportModel);
+				calculateModelsList.add(calculateModel);
 			}
-			view.showReport(reportModels);
+			view.showReport(calculateModelsList);
 		} catch(Exception e) {
-			System.out.println("Report query : " + e.getMessage());
+			System.out.println("Report query : " + e.getLocalizedMessage());
+			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void exportToExcel(List<CalculateModel> calculateModelsList) {
+		
 	}
 
 }

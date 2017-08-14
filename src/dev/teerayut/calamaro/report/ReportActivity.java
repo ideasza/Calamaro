@@ -3,17 +3,24 @@ package dev.teerayut.calamaro.report;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -30,10 +37,19 @@ import javax.swing.table.JTableHeader;
 
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
+import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 
+import dev.teerayut.calamaro.connection.ConnectionDB;
 import dev.teerayut.calamaro.model.CalculateModel;
 import dev.teerayut.calamaro.model.ReportModel;
 import dev.teerayut.calamaro.utils.ScreenCenter;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 public class ReportActivity extends JDialog implements ReportInterface.View{
 
@@ -42,12 +58,14 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
     private int exitCode = ID_CANCEL;
     private ReportInterface.Presenter presenter;
     
+    private String reportURL;
+    private String report = null;
     private String dateReport;
     private DefaultTableModel model;
     private Object[][] objs;
     private Object[] columName = {"เลขที่ใบเสร็จ", "วันที่", "ประเภทรายการ", "สกุลเงิน", "อัตราซื้อ", "อัตราขาย", "จำนวน", "เงินไทย"};
     private List<ReportModel> reportModelsList = new ArrayList<ReportModel>();
-    private List<CalculateModel> calculateModelsList = new ArrayList<CalculateModel>();
+    private List<CalculateModel> calculateModelList = new ArrayList<CalculateModel>();
 
     public ReportActivity(Frame owner) {
         super(owner);
@@ -101,13 +119,12 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
         setBounds(100, 100, width -100, height - 100);
         setTitle("CALAMARO - Reports");
         new ScreenCenter().centreWindow(this);
-        getContentPane().setLayout(null);
+        getContentPane().setLayout(new java.awt.BorderLayout());
 		
         toolPanel = new javax.swing.JPanel();
 		toolPanel.setBounds(0, 0, width, 40);
 		
-		getContentPane().add(toolPanel);
-		toolPanel.setLayout(null);
+		getContentPane().add(toolPanel, java.awt.BorderLayout.NORTH);
 		
 		Date date = new Date();
 		Calendar calendar = Calendar.getInstance();
@@ -128,44 +145,47 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		dateSettings.setFormatForDatesCommonEra("yyyy-MM-dd");
 		DatePicker datePicker1 = new DatePicker(dateSettings);
 		datePicker1.setDateToToday();
-		datePicker1.setBounds(0, 0, 200, 41);
+		toolPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		datePicker1.setPreferredSize(new java.awt.Dimension(200, 35));
 		toolPanel.add(datePicker1);
 		datePicker1.setFont(new Font("Angsana New", Font.PLAIN, 30));
 		
-		int offset = (int) datePicker1.getSize().getWidth() + 10;
-		JButton buttonReport = new JButton("โหลดรายงาน");
-		buttonReport.setBounds(210, 0, 200, 40);
-		buttonReport.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		datePicker1.addDateChangeListener(new DateChangeListener() {
+			
+			@Override
+			public void dateChanged(DateChangeEvent arg0) {
 				dateReport = datePicker1.getDate().toString();
-				presenter.getReport(dateReport);
+				//presenter.getReport(dateReport);
+				
 			}
 		});
-		toolPanel.add(buttonReport);
 		
-		offset = (int)buttonReport.getSize().getWidth() + 10;
+		int offset = (int) datePicker1.getSize().getWidth() + 10;
 		buttonExport = new JButton("Export");
-		buttonExport.setBounds(422, 0, 200, 40);
+		buttonExport.setFont(new Font("Tahoma", Font.BOLD, 14));
+		buttonExport.setForeground(SystemColor.desktop);
+		buttonExport.setBackground(SystemColor.controlHighlight);
 		buttonExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//present.exportToExcel(dateReport, listReportData);
+				createReport(dateReport);
 			}
 		});
 		
+		buttonExport.setOpaque(true);
 		buttonExport.setIcon(new ImageIcon(getClass().getResource("/excel.png")));
 		toolPanel.add(buttonExport);
 		
 		centerPanel.setLayout(new java.awt.BorderLayout());
 		centerPanel.setBorder(BorderFactory.createTitledBorder("รายงาน"));
-		getContentPane().add(centerPanel);
+		//getContentPane().add(centerPanel, java.awt.BorderLayout.CENTER);
 		
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setVerifyInputWhenFocusTarget(false);
 		scrollPane.setRequestFocusEnabled(false);
 		centerPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
-		scrollPane.setPreferredSize(new Dimension(1900, 880));
+		scrollPane.setPreferredSize(new Dimension(1900, 800));
 		
 		table =  new javax.swing.JTable() {
 		    public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -196,15 +216,15 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		table.setFillsViewportHeight(true); 
 		table.setRowSelectionAllowed(false);
 		table.setEnabled(true);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		scrollPane.setViewportView(table);
-		
-		if (reportModelsList.size() == 0) {
-			buttonExport.setEnabled(false);
-		}
 		
 		pack();
         setLocationRelativeTo(getParent());
+        
+        if (reportModelsList.size() == 0) {
+			//buttonExport.setEnabled(false);
+		}
 	}
 
 	@Override
@@ -219,41 +239,54 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
         return exitCode;
     }
 
+	public void onFaile(String fail) {
+		final ImageIcon icon = new ImageIcon(getClass().getResource("/fail32.png"));
+        JOptionPane.showMessageDialog(null, fail, "Alert", JOptionPane.ERROR_MESSAGE, icon);
+	}
+
 	@Override
-	public void showReport(List<ReportModel> reportModels) {
-		this.reportModelsList = reportModels;
-		if (reportModelsList.size() == 0) {
+	public void onSuccess(String s) {
+		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
+		JOptionPane.showMessageDialog(null, s, "Success", JOptionPane.ERROR_MESSAGE, icon);
+	}
+
+	@Override
+	public void showReport(List<CalculateModel> calculateModelsList) {
+		//this.calculateModelList.clear();
+		this.calculateModelList = calculateModelsList;
+		if (calculateModelList.size() == 0) {
 			onFaile("ไม่มีข้อมูลรายงาน");
 			return;
 		} else {
-			buttonExport.setEnabled(true);
+			//buttonExport.setEnabled(true);
 		}
 		
-		model = new DefaultTableModel(new Object[0][0], columName);
-		for (int i = 0; i < reportModelsList.size(); i++) {
-			ReportModel m = reportModelsList.get(i);
-			model.addRow(new Object[] {m.getReportNumber().trim(), 
+		model = new DefaultTableModel(objs, columName);
+		for (int i = 0; i < calculateModelList.size(); i++) {
+			CalculateModel m = calculateModelList.get(i);
+			
+			model.addRow(new Object[] {m.getReportNumber(), 
 					m.getReportDate(), 
-					m.getReportType().trim(), 
-					m.getReportCurrency().trim(),
-					String.format("%.2f", m.getReportBuyRate().trim()),
-					String.format("%.2f", m.getReportSellRate().trim()),
-					String.format("%,.2f",m.getReportAmount().trim()),
-					String.format("%,.2f",m.getReportTotal().trim())
+					m.getReportType(), 
+					m.getReportCurrency(),
+					String.format("%.2f", Float.parseFloat(m.getReportBuyRate())),
+					String.format("%.2f", Float.parseFloat(m.getReportSellRate())),
+					String.format("%,.2f",Float.parseFloat(m.getReportAmount())),
+					String.format("%,.2f",Float.parseFloat(m.getReportTotal()))
 			});
 		}
 		
 		table.setModel(model);
 		JTableHeader header = table.getTableHeader();
     	header.setPreferredSize(new Dimension(100, 80));
-		table.getTableHeader().setFont(new Font("Angsana New", Font.BOLD, 44));
-		table.setFont(new Font("Angsana New", Font.BOLD, 38));
+		table.getTableHeader().setFont(new Font("Angsana New", Font.BOLD, 40));
+		table.setFont(new Font("Angsana New", Font.PLAIN, 36));
 		
 		int columnsWidth = scrollPane.getSize().width;
 		
-		table.getColumnModel().getColumn(0).setPreferredWidth(columnsWidth / 15);
-		table.getColumnModel().getColumn(1).setPreferredWidth(columnsWidth / 4);
-		table.getColumnModel().getColumn(2).setPreferredWidth(columnsWidth / 11);
+		table.getColumnModel().getColumn(0).setPreferredWidth(columnsWidth / 6);
+		table.getColumnModel().getColumn(1).setPreferredWidth(columnsWidth / 6);
+		table.getColumnModel().getColumn(2).setPreferredWidth(columnsWidth / 6);
 		table.getColumnModel().getColumn(3).setPreferredWidth(columnsWidth / 11);
 		table.getColumnModel().getColumn(4).setPreferredWidth(columnsWidth / 8);
 		table.getColumnModel().getColumn(5).setPreferredWidth(columnsWidth / 8);
@@ -273,16 +306,27 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		table.getColumnModel().getColumn(4).setCellRenderer(rightRender);
 		table.getColumnModel().getColumn(5).setCellRenderer(rightRender);
 		table.getColumnModel().getColumn(6).setCellRenderer(rightRender);
+		table.getColumnModel().getColumn(7).setCellRenderer(rightRender);
 	}
-
-	public void onFaile(String fail) {
-		final ImageIcon icon = new ImageIcon(getClass().getResource("/fail32.png"));
-        JOptionPane.showMessageDialog(null, fail, "Alert", JOptionPane.ERROR_MESSAGE, icon);
-	}
-
-	@Override
-	public void onSuccess(String s) {
-		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
-		JOptionPane.showMessageDialog(null, s, "Success", JOptionPane.ERROR_MESSAGE, icon);
+	
+	private void createReport(String date) {
+		Map param = new HashMap();
+		param.put("date", date);
+		
+		try {
+			reportURL = getClass().getResource("/template/report_template.jrxml").getFile();
+			File file = new File(reportURL);
+			file = file.getAbsoluteFile();
+			report = file.getPath();
+			System.out.println(report);
+			
+			JasperReport ir = JasperCompileManager.compileReport(report);
+			JasperPrint ip = JasperFillManager.fillReport(ir, param, new ConnectionDB().connect());
+			//JasperViewer.viewReport(ip);
+			
+			getContentPane().add(new JasperViewer(ip), java.awt.BorderLayout.CENTER);
+		} catch (JRException je) {
+			je.printStackTrace();
+		}
 	}
 }

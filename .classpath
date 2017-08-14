@@ -9,5 +9,12 @@
 	<classpathentry kind="lib" path="lib/jxl.jar"/>
 	<classpathentry kind="lib" path="lib/LGoodDatePicker-10.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.18.0.jar"/>
+	<classpathentry kind="lib" path="lib/jasperreports-6.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/jasperreports-javaflow-6.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/itext5-itext-pdfa-5.5.11.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-1.9.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections4-4.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-digester3-3.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

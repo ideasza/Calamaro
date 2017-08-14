@@ -417,19 +417,34 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 	private String generateKey(String lastkey) {
 		String[] key;
 		String prefixKey;
+		String runningFormat = null;
 		int running;
 		String generateNumber = null;
 		
 		if (lastkey != null) {
 			key = lastkey.split("-");
-			prefixKey = key[0];
+			//prefixKey = key[0];
 			running = Integer.parseInt(key[1]);
 			running++;
-			generateNumber = prefixKey + "-" + String.format("%04d", running);
+			if (running < 10) {
+				runningFormat = "000" + running;
+				//runningFormat = String.format("%04d", running);
+			} else if (running > 10 && running < 100) {
+				runningFormat = "00" + running;
+				//runningFormat = String.format("%03d", running);
+			} else if (running > 100 && running < 1000) {
+				runningFormat = "0" + running;
+				//runningFormat = String.format("%02d", running);
+			} else if (running > 1000 && running < 10000) {
+				runningFormat = "" + running;
+			} else {
+				runningFormat = "0001";
+			}
+			generateNumber = prefixName + new DateFormate().getDateForBill() + "-" + runningFormat;
 		} else {
-			running = 0000;
-			running++;
-			generateNumber = prefixName + new DateFormate().getDateForBill() + "-" + String.format("%04d", running);
+			/*running = 0000;
+			running++;*/
+			generateNumber = prefixName + new DateFormate().getDateForBill() + "-0001";
 		}
 		return generateNumber;
 	}
