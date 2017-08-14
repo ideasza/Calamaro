@@ -13,8 +13,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +33,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import org.apache.log4j.BasicConfigurator;
+
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
@@ -49,6 +49,7 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JRViewer;
 import net.sf.jasperreports.view.JasperViewer;
 
 public class ReportActivity extends JDialog implements ReportInterface.View{
@@ -91,7 +92,7 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 	private javax.swing.JLabel lblCoID;
     
     private void initWidget() {
-    	presenter = new ReportPresenter(this);
+    	//presenter = new ReportPresenter(this);
 		topPanel = new javax.swing.JPanel();
 		topPanel.setBounds(0, 0, 1902, 75);
 		bottomPanel = new javax.swing.JPanel();
@@ -115,7 +116,7 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
     	GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int h = gd.getDisplayMode().getHeight();
 		int w = gd.getDisplayMode().getHeight();
-        setPreferredSize(new Dimension(width - 100, height - 100));
+        setPreferredSize(new Dimension(width /6, height /6));
         setBounds(100, 100, width -100, height - 100);
         setTitle("CALAMARO - Reports");
         new ScreenCenter().centreWindow(this);
@@ -124,7 +125,7 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
         toolPanel = new javax.swing.JPanel();
 		toolPanel.setBounds(0, 0, width, 40);
 		
-		getContentPane().add(toolPanel, java.awt.BorderLayout.NORTH);
+		getContentPane().add(toolPanel, java.awt.BorderLayout.CENTER);
 		
 		Date date = new Date();
 		Calendar calendar = Calendar.getInstance();
@@ -144,11 +145,15 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		DatePickerSettings dateSettings = new DatePickerSettings();
 		dateSettings.setFormatForDatesCommonEra("yyyy-MM-dd");
 		DatePicker datePicker1 = new DatePicker(dateSettings);
+		datePicker1.getComponentToggleCalendarButton().setBounds(174, 0, 26, 35);
+		datePicker1.getComponentDateTextField().setBounds(0, 0, 171, 35);
+		datePicker1.setBounds(51, 5, 200, 35);
 		datePicker1.setDateToToday();
-		toolPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		toolPanel.setLayout(null);
 		datePicker1.setPreferredSize(new java.awt.Dimension(200, 35));
 		toolPanel.add(datePicker1);
 		datePicker1.setFont(new Font("Angsana New", Font.PLAIN, 30));
+		datePicker1.setLayout(null);
 		
 		datePicker1.addDateChangeListener(new DateChangeListener() {
 			
@@ -156,7 +161,7 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 			public void dateChanged(DateChangeEvent arg0) {
 				dateReport = datePicker1.getDate().toString();
 				//presenter.getReport(dateReport);
-				
+				createReport(dateReport);
 			}
 		});
 		
@@ -168,13 +173,14 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		buttonExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//present.exportToExcel(dateReport, listReportData);
+				dateReport = datePicker1.getDate().toString();
 				createReport(dateReport);
 			}
 		});
 		
 		buttonExport.setOpaque(true);
 		buttonExport.setIcon(new ImageIcon(getClass().getResource("/excel.png")));
-		toolPanel.add(buttonExport);
+		//toolPanel.add(buttonExport);
 		
 		centerPanel.setLayout(new java.awt.BorderLayout());
 		centerPanel.setBorder(BorderFactory.createTitledBorder("รายงาน"));
@@ -184,7 +190,7 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setVerifyInputWhenFocusTarget(false);
 		scrollPane.setRequestFocusEnabled(false);
-		centerPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+		//centerPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
 		scrollPane.setPreferredSize(new Dimension(1900, 800));
 		
 		table =  new javax.swing.JTable() {
@@ -221,10 +227,6 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		
 		pack();
         setLocationRelativeTo(getParent());
-        
-        if (reportModelsList.size() == 0) {
-			//buttonExport.setEnabled(false);
-		}
 	}
 
 	@Override
@@ -252,13 +254,11 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 
 	@Override
 	public void showReport(List<CalculateModel> calculateModelsList) {
-		//this.calculateModelList.clear();
+		this.calculateModelList.clear();
 		this.calculateModelList = calculateModelsList;
 		if (calculateModelList.size() == 0) {
 			onFaile("ไม่มีข้อมูลรายงาน");
 			return;
-		} else {
-			//buttonExport.setEnabled(true);
 		}
 		
 		model = new DefaultTableModel(objs, columName);
@@ -309,8 +309,10 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		table.getColumnModel().getColumn(7).setCellRenderer(rightRender);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void createReport(String date) {
-		Map param = new HashMap();
+		BasicConfigurator.configure();
+		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("date", date);
 		
 		try {
@@ -318,13 +320,11 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 			File file = new File(reportURL);
 			file = file.getAbsoluteFile();
 			report = file.getPath();
-			System.out.println(report);
 			
 			JasperReport ir = JasperCompileManager.compileReport(report);
 			JasperPrint ip = JasperFillManager.fillReport(ir, param, new ConnectionDB().connect());
-			//JasperViewer.viewReport(ip);
-			
-			getContentPane().add(new JasperViewer(ip), java.awt.BorderLayout.CENTER);
+			JasperViewer.viewReport(ip, false);
+			this.dispose();
 		} catch (JRException je) {
 			je.printStackTrace();
 		}

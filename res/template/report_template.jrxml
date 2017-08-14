@@ -47,7 +47,7 @@
 			<staticText>
 				<reportElement x="140" y="60" width="383" height="42" uuid="8240065e-64b6-4170-b5d9-6341598e7b35"/>
 				<textElement textAlignment="Left">
-					<font fontName="Angsana New" size="16"/>
+					<font fontName="SansSerif" size="14"/>
 				</textElement>
 				<text><![CDATA[เลขที่ผู้เสียภาษี 0815560001531
 125/56 หมู่ที่ 7 ตำบลอ่าวนาง อำเภอเมือง จังหวัดกระบี่ 81000]]></text>
@@ -66,58 +66,58 @@
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement style="Column header" x="0" y="-10" width="110" height="25" forecolor="#000000" uuid="ecb7b2e9-5407-487f-a438-c5f5bb20309b"/>
+				<reportElement style="Column header" x="0" y="-10" width="120" height="25" forecolor="#000000" uuid="ecb7b2e9-5407-487f-a438-c5f5bb20309b"/>
 				<textElement textAlignment="Center">
-					<font fontName="Angsana New" size="18" isBold="true"/>
+					<font fontName="SansSerif" size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[เลขที่ใบเสร็จ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="110" y="-10" width="100" height="25" forecolor="#000000" uuid="68941a13-adc1-462d-9365-ab2b2d7ac794"/>
+				<reportElement style="Column header" x="120" y="-10" width="120" height="25" forecolor="#000000" uuid="68941a13-adc1-462d-9365-ab2b2d7ac794"/>
 				<textElement textAlignment="Center">
-					<font fontName="Angsana New" size="18" isBold="true"/>
+					<font fontName="SansSerif" size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[วันที่]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="210" y="-10" width="100" height="25" forecolor="#000000" uuid="88c317c5-2871-4221-aae4-e9f60dd08915"/>
+				<reportElement style="Column header" x="240" y="-10" width="70" height="25" forecolor="#000000" uuid="88c317c5-2871-4221-aae4-e9f60dd08915"/>
 				<textElement textAlignment="Center">
-					<font fontName="Angsana New" size="18" isBold="true"/>
+					<font fontName="SansSerif" size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ประเภท]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="310" y="-10" width="110" height="25" forecolor="#000000" uuid="0e8cd7bd-e914-460e-90a8-19d201a12841"/>
 				<textElement textAlignment="Center">
-					<font fontName="Angsana New" size="18" isBold="true"/>
+					<font fontName="SansSerif" size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[สกุลเงิน]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="420" y="-10" width="90" height="25" forecolor="#000000" uuid="6970ff92-c0f5-4f93-a2d6-1de114e8539e"/>
 				<textElement textAlignment="Center">
-					<font fontName="Angsana New" size="18" isBold="true"/>
+					<font fontName="SansSerif" size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[อัตราซื้อ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="510" y="-10" width="90" height="25" forecolor="#000000" uuid="daa9e754-c8b4-4b27-ba72-556c22fd3bc3"/>
 				<textElement textAlignment="Center">
-					<font fontName="Angsana New" size="18" isBold="true"/>
+					<font fontName="SansSerif" size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[อัตราขาย]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="600" y="-10" width="100" height="25" forecolor="#000000" uuid="73818b1a-86c4-456c-a5f3-3f195d670681"/>
 				<textElement textAlignment="Center">
-					<font fontName="Angsana New" size="18" isBold="true"/>
+					<font fontName="SansSerif" size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[จำนวนเงิน]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="700" y="-10" width="100" height="25" forecolor="#000000" uuid="13813bdf-44b6-4a33-b8e5-6e24a8600f15"/>
 				<textElement textAlignment="Center">
-					<font fontName="Angsana New" size="18" isBold="true"/>
+					<font fontName="SansSerif" size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[เงินไทย]]></text>
 			</staticText>
@@ -128,58 +128,58 @@
 			<frame>
 				<reportElement style="Row" mode="Opaque" x="0" y="0" width="802" height="15" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement style="Detail" x="0" y="0" width="110" height="15" uuid="82de7e77-fc1b-4aa2-ae11-3cf2bcc312e4"/>
+					<reportElement style="Detail" x="0" y="0" width="120" height="15" uuid="82de7e77-fc1b-4aa2-ae11-3cf2bcc312e4"/>
 					<textElement>
-						<font fontName="Angsana New" size="16"/>
+						<font fontName="SansSerif" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{report_number}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement style="Detail" x="110" y="0" width="100" height="15" uuid="06dccd40-0495-45f0-9623-6a40c546169f"/>
+					<reportElement style="Detail" x="120" y="0" width="120" height="15" uuid="06dccd40-0495-45f0-9623-6a40c546169f"/>
 					<textElement>
-						<font fontName="Angsana New" size="16"/>
+						<font fontName="SansSerif" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{report_date}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement style="Detail" x="210" y="0" width="100" height="15" uuid="60fd0ed5-0095-4fb7-be34-a4fed24ed138"/>
+					<reportElement style="Detail" x="240" y="0" width="70" height="15" uuid="60fd0ed5-0095-4fb7-be34-a4fed24ed138"/>
 					<textElement textAlignment="Center">
-						<font fontName="Angsana New" size="16"/>
+						<font fontName="SansSerif" size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{report_type}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement style="Detail" x="310" y="0" width="110" height="15" uuid="8aee057e-5b3e-4b06-a418-4c09d405ebcc"/>
 					<textElement textAlignment="Center">
-						<font fontName="Angsana New" size="16"/>
+						<font fontName="SansSerif" size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{report_currency}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement style="Detail" x="420" y="0" width="90" height="15" uuid="8e3b2a67-36d9-4be6-aec6-142feb002291"/>
-					<textElement textAlignment="Right">
-						<font fontName="Angsana New" size="16"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{report_buy_rate}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement style="Detail" x="510" y="0" width="90" height="15" uuid="8ab85e18-9f04-4932-a025-1c1ad447a9db"/>
-					<textElement textAlignment="Right">
-						<font fontName="Angsana New" size="16"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{report_sell_rate}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement style="Detail" x="600" y="0" width="90" height="15" uuid="f77cfd1f-6584-4213-9226-d64db710b9de"/>
 					<textElement textAlignment="Right">
-						<font fontName="Angsana New" size="16"/>
+						<font fontName="SansSerif" size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Float.parseFloat($F{report_amount}))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement style="Detail" x="700" y="0" width="90" height="15" uuid="0192743a-b40f-44c3-94a8-44f754e5078c"/>
+					<reportElement style="Detail" x="700" y="0" width="80" height="15" uuid="0192743a-b40f-44c3-94a8-44f754e5078c"/>
 					<textElement textAlignment="Right">
-						<font fontName="Angsana New" size="16"/>
+						<font fontName="SansSerif" size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Float.parseFloat($F{report_total}))]]></textFieldExpression>
 				</textField>
@@ -194,19 +194,6 @@
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
-			<staticText>
-				<reportElement x="1" y="9" width="100" height="30" uuid="39567ff3-b7b9-4865-9fdc-2e610711be4e"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Angsana New" size="18" isBold="true"/>
-				</textElement>
-				<text><![CDATA[รวมทั้งสิ้น]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="600" y="9" width="192" height="30" uuid="68a54caf-eb57-4543-a6d2-5e47e4f3ef8b"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Angsana New" size="18" isBold="true"/>
-				</textElement>
-			</textField>
 		</band>
 	</columnFooter>
 	<pageFooter>

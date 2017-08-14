@@ -18,8 +18,12 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,6 +33,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -37,6 +42,9 @@ import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.apache.log4j.BasicConfigurator;
+
+import dev.teerayut.calamaro.connection.ConnectionDB;
 import dev.teerayut.calamaro.model.CurrencyItem;
 import dev.teerayut.calamaro.process.ProcessActivity;
 import dev.teerayut.calamaro.report.ReportActivity;
@@ -47,10 +55,19 @@ import dev.teerayut.calamaro.utils.Config;
 import dev.teerayut.calamaro.utils.DateFormate;
 import dev.teerayut.calamaro.utils.Preferrence;
 import dev.teerayut.calamaro.utils.ScreenCenter;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 public class MainActivity extends JFrame implements MainInterface.View{
 
+	private String reportFile;
 	private JMenu edit, report;
 	private JPanel contentPane;
 	private Point moniter1 = null;
@@ -104,6 +121,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	
 	private javax.swing.JLabel lblSource;
 	private javax.swing.JLabel lblTime;
+	private JMenuItem menuItem;
+	private JMenuItem menuItem_1;
 	
 	private void initWidget() {
 		presenter = new MainPresenter(this);
@@ -303,16 +322,31 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		menu.add(edit);
 		
 		report = new JMenu("\u0E23\u0E32\u0E22\u0E07\u0E32\u0E19");
-		report.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
+		menu.add(report);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date now = new Date();
+	    String strDate = sdf.format(now);
+	    
+		menuItem = new JMenuItem("รายงาน ณ วันที่ " + strDate);
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				createReport();
+			}
+		});
+		
+		report.add(menuItem);
+		
+		menuItem_1 = new JMenuItem("รายงานย้อนหลัง");
+		menuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				ReportActivity report = new ReportActivity(MainActivity.this);
 				if(report.doModal() == ReportActivity.ID_OK) {}
 				report.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				report.setModal(true);
 			}
 		});
-		menu.add(report);
+		report.add(menuItem_1);
 		
 		JMenu settings = new JMenu("\u0E15\u0E31\u0E49\u0E07\u0E04\u0E48\u0E32");
 		settings.addMouseListener(new MouseAdapter() {
@@ -458,5 +492,30 @@ public class MainActivity extends JFrame implements MainInterface.View{
         }
 		processActivity.setLocationRelativeTo(null);
 		processActivity.setModal(true);
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void createReport() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date now = new Date();
+	    String strDate = sdf.format(now);
+	    System.out.println(strDate);
+	    
+		BasicConfigurator.configure();
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("date", strDate);
+		
+		try {
+			String reportURL = getClass().getResource("/template/report_template.jrxml").getFile();
+			File file = new File(reportURL);
+			file = file.getAbsoluteFile();
+			reportFile = file.getPath();
+			
+			JasperReport ir = JasperCompileManager.compileReport(reportFile);
+			JasperPrint ip = JasperFillManager.fillReport(ir, param, new ConnectionDB().connect());
+			JasperViewer.viewReport(ip, false);
+		} catch (JRException je) {
+			je.printStackTrace();
+		}
 	}
 }
