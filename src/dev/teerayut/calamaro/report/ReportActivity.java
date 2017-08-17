@@ -1,44 +1,35 @@
 package dev.teerayut.calamaro.report;
 
-import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.SystemColor;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 
 import org.apache.log4j.BasicConfigurator;
-
-import com.github.lgooddatepicker.components.DatePicker;
-import com.github.lgooddatepicker.components.DatePickerSettings;
-import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
-import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 
 import dev.teerayut.calamaro.connection.ConnectionDB;
 import dev.teerayut.calamaro.model.CalculateModel;
@@ -49,7 +40,6 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.view.JRViewer;
 import net.sf.jasperreports.view.JasperViewer;
 
 public class ReportActivity extends JDialog implements ReportInterface.View{
@@ -90,9 +80,12 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JLabel lblCompanyName;
 	private javax.swing.JLabel lblCoID;
+	
+	private JComboBox comboBox;
+	 private DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
     
     private void initWidget() {
-    	//presenter = new ReportPresenter(this);
+    	presenter = new ReportPresenter(this);
 		topPanel = new javax.swing.JPanel();
 		topPanel.setBounds(0, 0, 1902, 75);
 		bottomPanel = new javax.swing.JPanel();
@@ -103,6 +96,8 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		lblCoID = new javax.swing.JLabel();
 		
 		scrollPane = new javax.swing.JScrollPane();
+		
+		comboBox = new JComboBox();
 	}
 
 	/**
@@ -120,14 +115,14 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
         setBounds(100, 100, width -100, height - 100);
         setTitle("CALAMARO - Reports");
         new ScreenCenter().centreWindow(this);
-        getContentPane().setLayout(new java.awt.BorderLayout());
+        getContentPane().setLayout(null);
 		
         toolPanel = new javax.swing.JPanel();
-		toolPanel.setBounds(0, 0, width, 40);
+		toolPanel.setBounds(12, 5, 278, 115);
 		
-		getContentPane().add(toolPanel, java.awt.BorderLayout.CENTER);
+		getContentPane().add(toolPanel);
 		
-		Date date = new Date();
+		/*Date date = new Date();
 		Calendar calendar = Calendar.getInstance();
 		int subtractYearValue = 543;
 
@@ -153,9 +148,33 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		datePicker1.setPreferredSize(new java.awt.Dimension(200, 35));
 		toolPanel.add(datePicker1);
 		datePicker1.setFont(new Font("Angsana New", Font.PLAIN, 30));
-		datePicker1.setLayout(null);
+		datePicker1.setLayout(null);*/
+		toolPanel.setLayout(null);
 		
-		datePicker1.addDateChangeListener(new DateChangeListener() {
+		JLabel label = new JLabel("เลือกวันที่ต้องการ");
+		label.setFont(new Font("Angsana New", Font.PLAIN, 25));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setBounds(85, 13, 120, 30);
+		toolPanel.add(label);
+		
+		
+		comboBox.setBounds(48, 55, 177, 30);
+		toolPanel.add(comboBox);
+		
+		presenter.getReportFromDate();
+		
+		comboBox.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if ((e.getStateChange() == ItemEvent.SELECTED)) {
+                    String str = comboBox.getSelectedItem().toString();
+                    createReport(str);
+                }
+            }
+        });
+		
+		/*datePicker1.addDateChangeListener(new DateChangeListener() {
 			
 			@Override
 			public void dateChanged(DateChangeEvent arg0) {
@@ -223,7 +242,7 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		table.setRowSelectionAllowed(false);
 		table.setEnabled(true);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		scrollPane.setViewportView(table);
+		scrollPane.setViewportView(table);*/
 		
 		pack();
         setLocationRelativeTo(getParent());
@@ -254,7 +273,7 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 
 	@Override
 	public void showReport(List<CalculateModel> calculateModelsList) {
-		this.calculateModelList.clear();
+		/*this.calculateModelList.clear();
 		this.calculateModelList = calculateModelsList;
 		if (calculateModelList.size() == 0) {
 			onFaile("ไม่มีข้อมูลรายงาน");
@@ -306,7 +325,7 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		table.getColumnModel().getColumn(4).setCellRenderer(rightRender);
 		table.getColumnModel().getColumn(5).setCellRenderer(rightRender);
 		table.getColumnModel().getColumn(6).setCellRenderer(rightRender);
-		table.getColumnModel().getColumn(7).setCellRenderer(rightRender);
+		table.getColumnModel().getColumn(7).setCellRenderer(rightRender);*/
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -328,5 +347,19 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		} catch (JRException je) {
 			je.printStackTrace();
 		}
+	}
+
+	@Override
+	public void setDateToComboBox(ResultSet rs) {
+		try {
+			while (rs.next()) {
+				comboBoxModel.addElement(rs.getString("report_create_date").toString());
+			}
+			comboBox.setModel(comboBoxModel);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

@@ -60,4 +60,22 @@ public class ReportPresenter implements ReportInterface.Presenter {
 		
 	}
 
+	@Override
+	public ResultSet getReportFromDate() {
+		StringBuilder sb = new StringBuilder();
+		sb.delete(0, sb.length());
+		sb.append("SELECT report_create_date FROM Report ");
+		sb.append("GROUP BY report_create_date");
+		connectionDB = new ConnectionDB();
+		try {
+			resultSet = connectionDB.dbQuery(sb.toString());
+			view.setDateToComboBox(resultSet);
+		} catch(Exception e) {
+			System.out.println("Report query date : " + e.getLocalizedMessage());
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+
 }

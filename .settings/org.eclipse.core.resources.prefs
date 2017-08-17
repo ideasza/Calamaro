@@ -3,6 +3,7 @@ encoding//res/template/report_template.jrxml=UTF-8
 encoding//src/dev/teerayut/calamaro/main/MainActivity.java=UTF-8
 encoding//src/dev/teerayut/calamaro/process/ProcessActivity.java=UTF-8
 encoding//src/dev/teerayut/calamaro/process/ProcessPresenter.java=UTF-8
+encoding//src/dev/teerayut/calamaro/receipt/Receive.java=UTF-8
 encoding//src/dev/teerayut/calamaro/report/ReportActivity.java=UTF-8
 encoding//src/dev/teerayut/calamaro/report/report_template.jrxml=UTF-8
 encoding//src/dev/teerayut/calamaro/settings/SettingsActivity.java=UTF-8

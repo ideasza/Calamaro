@@ -10,6 +10,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
 
 public class ProcessActivity extends JDialog implements ProcessInterface.View{
 
@@ -79,9 +81,6 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
         addWindowListener(new WindowAdapter() {
         	@Override
         	public void windowOpened(WindowEvent e) {
-        		/*table.getCellEditor().stopCellEditing();
-        		int row = table.getSelectedRow();
-                int col = table.getSelectedColumn();*/
                 table.changeSelection(0, 2, false, false);
             	table.editCellAt(0, 2);
             	table.setValueAt("0", 0, 2);
@@ -114,29 +113,29 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     	leftPanel = new javax.swing.JPanel();
     	rightPanel = new javax.swing.JPanel();
     	button = new javax.swing.JButton("OK");
-    	/*button.addMouseListener(new MouseAdapter() {
-    		@Override
-    		public void mouseClicked(MouseEvent e) {
+    	button.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
     			int row = table.getRowCount();
 				for (int i = 0; i < row; i++) {
 					calculateModel = new CalculateModel()
 							.setReportNumber(receiptNumber)
 							.setReportType(currecyType)
+							.setReportCurrency(table.getValueAt(i, 0).toString())
 							.setReportBuyRate(table.getValueAt(i, 1).toString())
 							.setReportSellRate(currencyItemList.get(i).getSellRate())
 							.setReportAmount(table.getValueAt(i, 2).toString())
-							.setReportTotal(lblTotalAmount.getText().toString());
+							.setReportTotal(table.getValueAt(i, 3).toString().replaceAll(",", ""));
 				}
 				calculateModelList.add(calculateModel);
 				presenter.insertReceipt(calculateModelList);
     		}
-    	});*/
+    	});
     	
     	button.setHorizontalTextPosition(SwingConstants.CENTER);
     	button.addKeyListener(new KeyAdapter() {
     		@Override
     		public void keyPressed(KeyEvent e) {
-    			try {
+    			/*try {
 	    			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						int row = table.getRowCount();
 						for (int i = 0; i < row; i++) {
@@ -154,7 +153,7 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 					}
     			} catch (Exception ex) {
     				System.out.println("Error : " + ex.getMessage());
-    			}
+    			}*/
     		}
     	});
     	button.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -220,7 +219,6 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     	bottomPanel.add(panelRight, java.awt.BorderLayout.LINE_END);
     	
     	createTable();
-    	//System.out.println("Number: " + receiptNumber);
     }
     
     private void createTable() {
@@ -257,7 +255,6 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 	            return c;
 	        }
 		};
-				
 		table.getModel().addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
@@ -389,9 +386,8 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 	public void onSuccess(String success) {
 		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
 		JOptionPane.showMessageDialog(null, success, "Success", JOptionPane.INFORMATION_MESSAGE, icon);
-		/*table.changeSelection(0, 2, false, false);
-    	table.editCellAt(0, 2);*/
-		createTable();
+		//createTable();
+		this.dispose();
 	}
 
 	@Override
@@ -448,5 +444,6 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 		}
 		return generateNumber;
 	}
+
 }
 

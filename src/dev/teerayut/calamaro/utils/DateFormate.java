@@ -11,6 +11,7 @@ public class DateFormate {
 	private String formatDB = "yyy-MM-dd HH:mm:ss";
 	private String formatTime = "HH:mm:ss";
 	private String formatBill = "yyyMMdd";
+	private String formatDate = "yyyy-MM-dd";
 	
 	public String getDateWithTime() {
 		try {
@@ -26,6 +27,17 @@ public class DateFormate {
 	public String getDate() {
 		try {
 			DateFormat dateFormat = new SimpleDateFormat(formatDB, new Locale("TH"));
+			Date date = new Date(); 
+			return dateFormat.format(date).toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getDateOnly() {
+		try {
+			DateFormat dateFormat = new SimpleDateFormat(formatDate, new Locale("TH"));
 			Date date = new Date(); 
 			return dateFormat.format(date).toString();
 		} catch (Exception e) {
