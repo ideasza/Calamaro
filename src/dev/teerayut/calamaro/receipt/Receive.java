@@ -7,6 +7,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.print.Doc;
@@ -22,25 +23,22 @@ import javax.swing.JOptionPane;
 
 import dev.teerayut.calamaro.main.MainActivity;
 import dev.teerayut.calamaro.model.CalculateModel;
+import dev.teerayut.calamaro.process.ProcessPresenter;
 import dev.teerayut.calamaro.utils.Convert;
 
-public class Receive implements Printable {	
+public class Receive {	
 	private String date, time, number;
 	private float grandTotal = 0;
 	private DecimalFormat df = new DecimalFormat("#,###.00");
 	
 	private PrinterServiceClass printerService;
 	private PrinterOptionsClass printerOptions;
-	static String printerName = "";
-	
-	public Receive() {
-
-	}
+	static String printerName = "EPSON TM-U220 Receipt";
 	
 	public void printReceipt(List<CalculateModel> calModel) {
 		for(CalculateModel m : calModel) {
-			date = m.getReportDate();
 			String[] timeSplit = m.getReportDate().split(" ");
+			date = timeSplit[0];
 			time = timeSplit[1];
 			number = m.getReportNumber();
 			System.out.println(date + " " + time + ", " + number);
@@ -128,24 +126,4 @@ public class Receive implements Printable {
 	    }
 	        return true;
     }
-
-	@Override
-	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-		if (pageIndex > 0) { /* We have only one page, and 'page' is zero-based */
-			return NO_SUCH_PAGE;
-		}
- 
-		/*
-		 * User (0,0) is typically outside the imageable area, so we must
-		 * translate by the X and Y values in the PageFormat to avoid clipping
-		 */
-		Graphics2D g2d = (Graphics2D) graphics;
-		g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
-		/* Now we perform our rendering */
- 
-		//g.setFont(new Font("Roman", 0, 8));
-		graphics.drawString("ภาษาไทย", 0, 10);
- 
-		return PAGE_EXISTS;
-	}	
 }

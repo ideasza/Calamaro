@@ -117,16 +117,17 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     		public void actionPerformed(ActionEvent e) {
     			int row = table.getRowCount();
 				for (int i = 0; i < row; i++) {
-					calculateModel = new CalculateModel()
-							.setReportNumber(receiptNumber)
-							.setReportType(currecyType)
-							.setReportCurrency(table.getValueAt(i, 0).toString())
-							.setReportBuyRate(table.getValueAt(i, 1).toString())
-							.setReportSellRate(currencyItemList.get(i).getSellRate())
-							.setReportAmount(table.getValueAt(i, 2).toString())
-							.setReportTotal(table.getValueAt(i, 3).toString().replaceAll(",", ""));
+					calculateModel = new CalculateModel();
+					calculateModel.setReportNumber(receiptNumber);
+					calculateModel.setReportDate(new DateFormate().getDate());
+					calculateModel.setReportType(currecyType);
+					calculateModel.setReportCurrency(table.getValueAt(i, 0).toString());
+					calculateModel.setReportBuyRate(table.getValueAt(i, 1).toString());
+					calculateModel.setReportSellRate(currencyItemList.get(i).getSellRate());
+					calculateModel.setReportAmount(table.getValueAt(i, 2).toString());
+					calculateModel.setReportTotal(table.getValueAt(i, 3).toString().replaceAll(",", ""));
+					calculateModelList.add(calculateModel);
 				}
-				calculateModelList.add(calculateModel);
 				presenter.insertReceipt(calculateModelList);
     		}
     	});

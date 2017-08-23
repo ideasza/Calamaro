@@ -37,15 +37,15 @@ public class ReportPresenter implements ReportInterface.Presenter {
 		try {
 			resultSet = connectionDB.dbQuery(sb.toString());
 			while(resultSet.next()) {
-				calculateModel = new CalculateModel()
-						.setReportNumber(resultSet.getString("report_number"))
-						.setReportDate(resultSet.getString("report_date"))
-						.setReportType(resultSet.getString("report_type"))
-						.setReportCurrency(resultSet.getString("report_currency"))
-						.setReportBuyRate(resultSet.getString("report_buy_rate"))
-						.setReportSellRate(resultSet.getString("report_sell_rate"))
-						.setReportAmount(resultSet.getString("report_amount"))
-						.setReportTotal(resultSet.getString("report_total"));
+				calculateModel = new CalculateModel();
+				calculateModel.setReportNumber(resultSet.getString("report_number"));
+				calculateModel.setReportDate(resultSet.getString("report_date"));
+				calculateModel.setReportType(resultSet.getString("report_type"));
+				calculateModel.setReportCurrency(resultSet.getString("report_currency"));
+				calculateModel.setReportBuyRate(resultSet.getString("report_buy_rate"));
+				calculateModel.setReportSellRate(resultSet.getString("report_sell_rate"));
+				calculateModel.setReportAmount(resultSet.getString("report_amount"));
+				calculateModel.setReportTotal(resultSet.getString("report_total"));
 				calculateModelsList.add(calculateModel);
 			}
 			view.showReport(calculateModelsList);

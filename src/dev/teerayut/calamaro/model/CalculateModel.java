@@ -14,58 +14,50 @@ public class CalculateModel {
 	public String getReportNumber() {
 		return reportNumber;
 	}
-	public CalculateModel setReportNumber(String reportNumber) {
+	public void setReportNumber(String reportNumber) {
 		this.reportNumber = reportNumber;
-		return this;
 	}
 	public String getReportDate() {
 		return reportDate;
 	}
-	public CalculateModel setReportDate(String reportDate) {
+	public void setReportDate(String reportDate) {
 		this.reportDate = reportDate;
-		return this;
 	}
 	public String getReportType() {
 		return reportType;
 	}
-	public CalculateModel setReportType(String reportType) {
+	public void setReportType(String reportType) {
 		this.reportType = reportType;
-		return this;
 	}
 	public String getReportCurrency() {
 		return reportCurrency;
 	}
-	public CalculateModel setReportCurrency(String reportCurrency) {
+	public void setReportCurrency(String reportCurrency) {
 		this.reportCurrency = reportCurrency;
-		return this;
 	}
 	public String getReportBuyRate() {
 		return reportBuyRate;
 	}
-	public CalculateModel setReportBuyRate(String reportBuyRate) {
+	public void setReportBuyRate(String reportBuyRate) {
 		this.reportBuyRate = reportBuyRate;
-		return this;
 	}
 	public String getReportSellRate() {
 		return reportSellRate;
 	}
-	public CalculateModel setReportSellRate(String reportSellRate) {
+	public void setReportSellRate(String reportSellRate) {
 		this.reportSellRate = reportSellRate;
-		return this;
 	}
 	public String getReportAmount() {
 		return reportAmount;
 	}
-	public CalculateModel setReportAmount(String reportAmount) {
+	public void setReportAmount(String reportAmount) {
 		this.reportAmount = reportAmount;
-		return this;
 	}
 	public String getReportTotal() {
 		return reportTotal;
 	}
-	public CalculateModel setReportTotal(String reportTotal) {
+	public void setReportTotal(String reportTotal) {
 		this.reportTotal = reportTotal;
-		return this;
 	}
 	
 	

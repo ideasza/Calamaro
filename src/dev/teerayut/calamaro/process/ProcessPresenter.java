@@ -16,10 +16,11 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 	private PreparedStatement psmt;
 	private ConnectionDB connectionDB;
 	private ProcessInterface.View view;
-	private List<CalculateModel> calList = new ArrayList<CalculateModel>();
+	private static List<CalculateModel> calList = new ArrayList<CalculateModel>();
 	public ProcessPresenter(ProcessInterface.View view) {
 		this.view = view;
 	}
+	
 	@Override
 	public void insertReceipt(List<CalculateModel> calculateList) {
 		this.calList = calculateList;
@@ -37,7 +38,7 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 			for (int i = 0; i < calculateList.size(); i++) {
 				CalculateModel model = calculateList.get(i);
 				psmt.setString(1, model.getReportNumber());
-				psmt.setString(2, new DateFormate().getDate());
+				psmt.setString(2, model.getReportDate());
 				psmt.setString(3, model.getReportType());
 				psmt.setString(4, model.getReportCurrency());
 				psmt.setString(5, model.getReportBuyRate());
@@ -80,5 +81,4 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 		}
 		connectionDB.closeAllTransaction();
 	}
-
 }
