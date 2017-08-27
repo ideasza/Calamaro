@@ -9,6 +9,8 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -16,6 +18,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -60,9 +65,9 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 
 public class MainActivity extends JFrame implements MainInterface.View{
@@ -322,9 +327,17 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		menu.add(edit);
 		
 		report = new JMenu("\u0E23\u0E32\u0E22\u0E07\u0E32\u0E19");
+		/*report.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReportActivity report = new ReportActivity(MainActivity.this);
+				if(report.doModal() == ReportActivity.ID_OK) {}
+				report.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				report.setModal(true);
+			}
+		});*/
 		menu.add(report);
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		/*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date now = new Date();
 	    String strDate = sdf.format(now);
 	    
@@ -335,9 +348,9 @@ public class MainActivity extends JFrame implements MainInterface.View{
 			}
 		});
 		
-		report.add(menuItem);
+		report.add(menuItem);*/
 		
-		menuItem_1 = new JMenuItem("รายงานย้อนหลัง");
+		menuItem_1 = new JMenuItem("รายงาน");
 		menuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ReportActivity report = new ReportActivity(MainActivity.this);
@@ -494,19 +507,18 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		processActivity.setModal(true);
 	}
 	
-	@SuppressWarnings("deprecation")
+	/*@SuppressWarnings("deprecation")
 	private void createReport() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date now = new Date();
 	    String strDate = sdf.format(now);
-	    System.out.println(strDate);
 	    
 		BasicConfigurator.configure();
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("date", strDate);
 		
 		try {
-			String reportURL = getClass().getResource("/template/report_template.jrxml").getFile();
+			String reportURL = "C:\\calamaro\\report\\template.jrxml";
 			File file = new File(reportURL);
 			file = file.getAbsoluteFile();
 			reportFile = file.getPath();
@@ -516,6 +528,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 			JasperViewer.viewReport(ip, false);
 		} catch (JRException je) {
 			je.printStackTrace();
-		}
-	}
+			onFail("Report error: " + je.getMessage());
+		} 
+	}*/
 }

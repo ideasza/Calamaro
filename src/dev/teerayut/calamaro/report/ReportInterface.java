@@ -9,13 +9,13 @@ public interface ReportInterface {
 
 	public interface View {
 		void showReport(List<CalculateModel> calculateModelsList);
-		void setDateToComboBox(ResultSet rs);
+		//void setDateToComboBox(ResultSet rs);
 		void onSuccess(String str);
 	}
 	
 	public interface Presenter {
 		void getReport(String date);
 		ResultSet getReportFromDate();
-		void exportToExcel(List<CalculateModel> calculateModelsList);
+		void exportToExcel(String date, List<CalculateModel> calculateModelsList);
 	}
 }
