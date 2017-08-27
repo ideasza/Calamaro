@@ -376,10 +376,10 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		                prefs.setPreferrence("settings_open", "1");
 		                lblSource.setText(" jdbc:sqlite: " + new File(Config.DB_PATH + Config.DB_FILE).getAbsolutePath().toString());
 		                lblSource.setIcon(new ImageIcon(getClass().getResource("/database_connect.png")));
-		                if (currencyItems.size() < 0) {
+		                /*if (currencyItems.size() < 0) {
 		                	presenter.requestCurrency();
-		                }
-		                
+		                }*/
+		                presenter.requestCurrency();
 					}
 		        }
 				settings.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

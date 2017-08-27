@@ -131,6 +131,7 @@ public class SettingsActivity extends JDialog{
 				prefs.setPreferrence("db_path", textField.getText().toString());
         		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
 		        JOptionPane.showMessageDialog(null, "บันทึกการตั้งค่าแล้ว", "Complete", JOptionPane.ERROR_MESSAGE, icon);
+		        dispose();
 		        
 			}
 		});    	
