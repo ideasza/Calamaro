@@ -84,7 +84,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	private ShowActivity sc;
 	private static String code;
 	private CurrencyItem item;
-	private List<CurrencyItem> currencyItems;
+	private List<CurrencyItem> currencyItems = new ArrayList<>();
 	private static List<CurrencyItem> currencyItemsList;
 
 	/**
@@ -196,10 +196,10 @@ public class MainActivity extends JFrame implements MainInterface.View{
 					lblSource.setText(" jdbc:sqlite: " + new File(Config.DB_PATH + Config.DB_FILE).getAbsolutePath().toString());
 	                lblSource.setIcon(new ImageIcon(getClass().getResource("/database_connect.png")));
 	        		presenter.requestCurrency();
-	        		/*if (!sc.isShowing()) {
+	        		if (!sc.isShowing()) {
 						sc.setLocation(moniter2);
 			            sc.setVisible(true);
-					}*/
+					}
 				} else {
 					prefs.setPreferrence("settings_open", "0");
 					edit.setEnabled(false);
@@ -370,16 +370,21 @@ public class MainActivity extends JFrame implements MainInterface.View{
 					System.out.println("modal");
 		        } else {
 		        	File database = new File(Config.DB_PATH + Config.DB_FILE);
-					if (database.exists() && prefs.getPreferrence("settings_open") != null) {
+					if (database.exists() && prefs.getPreferrence("settings_open") != null ) {
 		                edit.setEnabled(true);
 		                report.setEnabled(true);
 		                prefs.setPreferrence("settings_open", "1");
 		                lblSource.setText(" jdbc:sqlite: " + new File(Config.DB_PATH + Config.DB_FILE).getAbsolutePath().toString());
 		                lblSource.setIcon(new ImageIcon(getClass().getResource("/database_connect.png")));
-		                /*if (currencyItems.size() < 0) {
+		                if (currencyItems.size() > 0) {
+		                	
+		                } else {
 		                	presenter.requestCurrency();
-		                }*/
-		                presenter.requestCurrency();
+		                }
+		                if (!sc.isShowing()) {
+							sc.setLocation(moniter2);
+				            sc.setVisible(true);
+						}
 					}
 		        }
 				settings.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -392,7 +397,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 
 	@Override
 	public void setCurrencyItem(ResultSet resultSet) {
-		currencyItems = new ArrayList<>();
+		//currencyItems = new ArrayList<>();
 		try {
 			while(resultSet.next()) {
 				item = new CurrencyItem();
