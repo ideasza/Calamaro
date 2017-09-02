@@ -115,20 +115,26 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     	button = new javax.swing.JButton("OK");
     	button.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			int row = table.getRowCount();
-				for (int i = 0; i < row; i++) {
-					calculateModel = new CalculateModel();
-					calculateModel.setReportNumber(receiptNumber);
-					calculateModel.setReportDate(new DateFormate().getDate());
-					calculateModel.setReportType(currecyType);
-					calculateModel.setReportCurrency(table.getValueAt(i, 0).toString());
-					calculateModel.setReportBuyRate(table.getValueAt(i, 1).toString());
-					calculateModel.setReportSellRate(currencyItemList.get(i).getSellRate());
-					calculateModel.setReportAmount(table.getValueAt(i, 2).toString());
-					calculateModel.setReportTotal(table.getValueAt(i, 3).toString().replaceAll(",", ""));
-					calculateModelList.add(calculateModel);
-				}
-				presenter.insertReceipt(calculateModelList);
+    			try {
+	    			int row = table.getRowCount();
+					for (int i = 0; i < row; i++) {
+						if (!table.getValueAt(i, 2).toString().isEmpty()) {
+							calculateModel = new CalculateModel();
+							calculateModel.setReportNumber(receiptNumber);
+							calculateModel.setReportDate(new DateFormate().getDate());
+							calculateModel.setReportType(currecyType);
+							calculateModel.setReportCurrency(table.getValueAt(i, 0).toString());
+							calculateModel.setReportBuyRate(table.getValueAt(i, 1).toString());
+							calculateModel.setReportSellRate(currencyItemList.get(i).getSellRate());
+							calculateModel.setReportAmount(table.getValueAt(i, 2).toString());
+							calculateModel.setReportTotal(table.getValueAt(i, 3).toString().replaceAll(",", ""));
+							calculateModelList.add(calculateModel);
+						}
+					}
+					presenter.insertReceipt(calculateModelList);
+    			} catch(Exception ex) {
+    				System.out.print(ex.getMessage());
+    			}
     		}
     	});
     	
@@ -273,7 +279,7 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 			            } else if (col == 3) {
 			            	button.requestFocus();
 							button.requestFocusInWindow();
-							button.doClick();
+							//button.doClick();
 			            }
 					}
 				} catch (Exception ex) {
@@ -349,13 +355,17 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     }
     
     private void setItemToTable() {
-    	for (CurrencyItem item : currencyItemList) {
+    	for (int i = 0; i < currencyItemList.size(); i++) {
+    		CurrencyItem item = currencyItemList.get(i);
+    		model.addRow(new Object[] {item.getName(), 
+    				new Convert().formatDecimal(
+    						Float.parseFloat(
+    								(currencyCode.equals(item.getBuyCode())) ? item.getBuyRate() : item.getSellRate())), "", "0.00"});
+
     		if (currencyCode.equals(item.getBuyCode())) {
     			this.currecyType = "Buy";
-    			model.addRow(new Object[] {item.getName(), new Convert().formatDecimal(Float.parseFloat(item.getBuyRate())), "", "0.00"});
     		} else if (currencyCode.equals(item.getSellCode())) {
     			this.currecyType = "Sell";
-    			model.addRow(new Object[] {item.getName(), new Convert().formatDecimal(Float.parseFloat(item.getSellRate())), "", "0.00"});
     		}
     	}
     }

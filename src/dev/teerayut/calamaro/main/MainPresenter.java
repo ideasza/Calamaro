@@ -21,7 +21,7 @@ public class MainPresenter implements MainInterface.Presenter {
 	public void requestCurrency() {
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
-		sb.append("SELECT * FROM Currency");
+		sb.append("SELECT * FROM Currency WHERE currency_buy_code != 2 AND currency_buy_code != 3");
 		connectionDB = new ConnectionDB();
 		try {
 			resultSet = null;
@@ -39,10 +39,17 @@ public class MainPresenter implements MainInterface.Presenter {
 	public void getCurrency(String code) {
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
-		sb.append("SELECT currency_name, currency_buy_rate, currency_sell_rate, currency_buy_code, currency_sell_code ");
-		sb.append("FROM Currency ");
-		sb.append("WHERE currency_buy_code=" + code + " ");
-		sb.append("OR currency_sell_code=" + code);
+		
+		if (code.equals("1") || code.equals("41")) {
+			sb.append("SELECT currency_name, currency_buy_rate, currency_sell_rate, currency_buy_code, currency_sell_code ");
+			sb.append("FROM Currency ");
+			sb.append("LIMIT 3");
+		} else {
+			sb.append("SELECT currency_name, currency_buy_rate, currency_sell_rate, currency_buy_code, currency_sell_code ");
+			sb.append("FROM Currency ");
+			sb.append("WHERE currency_buy_code=" + code + " ");
+			sb.append("OR currency_sell_code=" + code);
+		}
 		
 		connectionDB = new ConnectionDB();
 		try {

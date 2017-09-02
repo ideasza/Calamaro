@@ -194,13 +194,13 @@ public class PrinterOptionsClass {
     }
 
     public String addLineSeperator() {
-    	String lineSpace = "----------------------------------------";
+    	String lineSpace = "------------------------------------------";
     	commandSet += lineSpace;
     	return lineSpace;
     }
     
     public String addLineSeperator2() {
-    	String lineSpace = "========================================";
+    	String lineSpace = "==========================================";
     	commandSet += lineSpace;
     	return lineSpace;
     }

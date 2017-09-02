@@ -65,14 +65,14 @@ public class Receive {
         p.alignLeft();
         p.addLineSeperator();
         p.newLine();
-        String headerItem = String.format("%-8s %6s %11s %11s", "Currency", "Rate", "Amount", "Total");
+        String headerItem = String.format("%-10s %6s %11s %11s", "Currency", "Rate", "Amount", "Total");
         p.setText(headerItem);
         p.newLine();
         p.addLineSeperator();
         p.newLine();
         for (int i = 0 ; i < calModel.size(); i++) {
 
-       	 	String item = String.format("%-8s %6.2f %11s %11s", 
+       	 	String item = String.format("%-10s %6.2f %11s %11s", 
        	 	calModel.get(i).getReportCurrency().trim(), 
        	 	(calModel.get(i).getReportType().equals("Buy")) 
        	 	? Float.parseFloat(calModel.get(i).getReportBuyRate()) : Float.parseFloat(calModel.get(i).getReportSellRate()),
@@ -88,7 +88,7 @@ public class Receive {
         p.newLine();
         p.addLineSeperator2();
         p.newLine();
-        String totalItem = String.format("%-8s %6.2s %11s %11s", "Total", "", "", new Convert().formatDecimal(grandTotal));
+        String totalItem = String.format("%-10s %6.2s %11s %11s", "Total", "", "", new Convert().formatDecimal(grandTotal));
         p.setText(totalItem);
 	    p.newLine();
         p.addLineSeperator2();

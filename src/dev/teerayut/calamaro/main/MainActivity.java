@@ -86,6 +86,9 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	private CurrencyItem item;
 	private List<CurrencyItem> currencyItems = new ArrayList<>();
 	private static List<CurrencyItem> currencyItemsList;
+	
+	private FlowLayout flowCenter;
+	private int centerWidth, centerHeight;
 
 	/**
 	 * Launch the application.
@@ -196,10 +199,10 @@ public class MainActivity extends JFrame implements MainInterface.View{
 					lblSource.setText(" jdbc:sqlite: " + new File(Config.DB_PATH + Config.DB_FILE).getAbsolutePath().toString());
 	                lblSource.setIcon(new ImageIcon(getClass().getResource("/database_connect.png")));
 	        		presenter.requestCurrency();
-	        		if (!sc.isShowing()) {
+	        		/*if (!sc.isShowing()) {
 						sc.setLocation(moniter2);
 			            sc.setVisible(true);
-					}
+					}*/
 				} else {
 					prefs.setPreferrence("settings_open", "0");
 					edit.setEnabled(false);
@@ -220,7 +223,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		height = (int) dimension.getHeight();
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		h = gd.getDisplayMode().getHeight();
-		w = gd.getDisplayMode().getHeight();
+		w = gd.getDisplayMode().getWidth();
 		
 		setTitle("CALAMARO");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -283,7 +286,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	}
 	
 	private void centerPanel() {
-		FlowLayout flowCenter = new FlowLayout(FlowLayout.CENTER);
+		flowCenter = new FlowLayout(FlowLayout.CENTER);
 		centerPanel.setLayout(new java.awt.BorderLayout());
 		getContentPane().add(centerPanel, java.awt.BorderLayout.CENTER);
 		
@@ -293,8 +296,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		centerPanel.add(rightInnerCenter, java.awt.BorderLayout.EAST);
 
 		centerPanel.add(centerTop, java.awt.BorderLayout.CENTER);
-		flowCenter.setHgap(10);
-		flowCenter.setVgap(5);
+		flowCenter.setHgap(15);
+		flowCenter.setVgap(15);
 		centerTop.setLayout(flowCenter);
 		
 		centerPanel.add(centerBottom, java.awt.BorderLayout.SOUTH);
@@ -307,6 +310,12 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		textField.requestFocus();
 		
 		centerBottom.add(centerRight, java.awt.BorderLayout.WEST);
+		
+		//System.out.println("Size: " + (w - 200) + ", " + (topPanel.getPreferredSize().getHeight() + centerBottom.getPreferredSize().getHeight()));
+		centerWidth = (w - 300);
+		centerHeight = h - (int)(topPanel.getPreferredSize().getHeight() + centerBottom.getPreferredSize().getHeight());
+		
+		//System.out.println("Size: " + centerWidth + ", " + centerHeight);
 	}
 	
 	private void menu() {
@@ -427,36 +436,55 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		for (int i = 0; i < listItem.size(); i++) {
 			CurrencyItem item = listItem.get(i);			
 			itemPanel = new javax.swing.JPanel();
-			itemPanel.setPreferredSize(new java.awt.Dimension(320, 110));
+			
+			int itemPanelW = (int)(centerWidth / 5);
+			int itemPanelH = (int)(centerHeight / 8);
+			
+			if (w < 1920) {
+				itemPanelW = itemPanelW + 20;
+				flowCenter.setHgap(20);
+				flowCenter.setVgap(25);
+			} else if (w == 1024) {
+				itemPanelW = (int)(centerWidth / 3) + 40;
+				flowCenter.setHgap(2);
+				flowCenter.setVgap(20);
+			}
+			
+			centerTop.setLayout(flowCenter);
+			
+			itemPanel.setPreferredSize(new java.awt.Dimension(itemPanelW, itemPanelH));
 			centerTop.add(itemPanel);
 			itemPanel.setLayout(new java.awt.BorderLayout());
 			itemPanel.setBorder(new LineBorder(new Color(128, 128, 128)));
 			
+			int panelW = (int)(itemPanel.getPreferredSize().getWidth());
+			int panelH = (int)(itemPanel.getPreferredSize().getHeight());
+
 			javax.swing.JLabel lblCurrencyName = new javax.swing.JLabel("");
-			lblCurrencyName.setFont(new Font("Tahoma", Font.BOLD, 20));
-			lblCurrencyName.setPreferredSize(new java.awt.Dimension(220, 110));
+			lblCurrencyName.setFont(new Font("Tahoma", Font.BOLD, 16));
+			lblCurrencyName.setPreferredSize(new java.awt.Dimension(panelW, panelH));
 			lblCurrencyName.setHorizontalAlignment(SwingConstants.LEADING);
 			lblCurrencyName.setText(" " + item.getName());
 			lblCurrencyName.setIcon(new ImageIcon(getClass().getResource("/flag/" + item.getImage())));
 			
 			itemPanelRight = new javax.swing.JPanel();
-			itemPanelRight.setPreferredSize(new java.awt.Dimension(100, 110));
+			itemPanelRight.setPreferredSize(new java.awt.Dimension((panelW / 3) - 20, panelH));
 			itemPanelRight.setLayout(new java.awt.BorderLayout());
 			
 			itemPanel.add(lblCurrencyName, java.awt.BorderLayout.LINE_START);
 			itemPanel.add(itemPanelRight, java.awt.BorderLayout.LINE_END);
 			
 			javax.swing.JLabel lblBuyCode = new javax.swing.JLabel();
-			lblBuyCode.setFont(new Font("Tahoma", Font.PLAIN, 18));
-			lblBuyCode.setPreferredSize(new java.awt.Dimension(120, 55));
+			lblBuyCode.setFont(new Font("Tahoma", Font.PLAIN, 16));
+			lblBuyCode.setPreferredSize(new java.awt.Dimension((panelW / 3), (panelH / 2)));
 			lblBuyCode.setHorizontalAlignment(SwingConstants.CENTER);
 			lblBuyCode.setText(item.getBuyCode());
 			lblBuyCode.setBackground(new Color(152, 251, 152));
 			lblBuyCode.setOpaque(true);
 			
 			javax.swing.JLabel lblSellCode = new javax.swing.JLabel();
-			lblSellCode.setFont(new Font("Tahoma", Font.PLAIN, 18));
-			lblSellCode.setPreferredSize(new java.awt.Dimension(120, 55));
+			lblSellCode.setFont(new Font("Tahoma", Font.PLAIN, 16));
+			lblSellCode.setPreferredSize(new java.awt.Dimension((panelW / 3), (panelH / 2)));
 			lblSellCode.setHorizontalAlignment(SwingConstants.CENTER);
 			lblSellCode.setText(item.getSellCode());
 			lblSellCode.setBackground(new Color(240, 128, 128));

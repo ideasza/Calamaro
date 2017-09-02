@@ -114,7 +114,7 @@ public class ConnectionDB {
 		 try {
 			 conn = connect();
 			 pstmt = conn.prepareStatement(statement);
-			 conn.setAutoCommit(true);
+			 conn.setAutoCommit(false);
 		 } catch (Exception e) {
 			 pstmt = null;
 			 dbCloseTransaction(stm, conn);
@@ -150,6 +150,23 @@ public class ConnectionDB {
 		            stm.close();
 		        else if (pstmt != null)
 		        	pstmt.close();
+		    }  catch (SQLException e) {
+		        try {
+		            if (conn != null)
+		            	conn.close();
+		        } catch (SQLException ex) {}  
+		    }
+	 }
+	 
+	 public void dbCommit() {
+		 try {
+		        if (stm != null) {
+		        	conn.commit();
+		            stm.close();
+		        } else if (pstmt != null) {
+		        	conn.commit();
+		        	pstmt.close();
+		        }
 		    }  catch (SQLException e) {
 		        try {
 		            if (conn != null)
