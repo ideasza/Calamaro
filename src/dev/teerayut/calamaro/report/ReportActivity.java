@@ -54,6 +54,8 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.view.JasperViewer;
 import java.awt.BorderLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class ReportActivity extends JDialog implements ReportInterface.View{
 
@@ -124,7 +126,7 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
     	GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int h = gd.getDisplayMode().getHeight();
 		int w = gd.getDisplayMode().getHeight();
-        setPreferredSize(new Dimension(width , height ));
+        setPreferredSize(new Dimension(width , height - 150 ));
         setBounds(100, 100, width -100, height - 100);
         setTitle("CALAMARO - Reports");
         new ScreenCenter().centreWindow(this);
@@ -153,6 +155,15 @@ public class ReportActivity extends JDialog implements ReportInterface.View{
 		DatePickerSettings dateSettings = new DatePickerSettings();
 		dateSettings.setFormatForDatesCommonEra("yyyy-MM-dd");
 		DatePicker datePicker1 = new DatePicker(dateSettings);
+		datePicker1.getComponentDateTextField().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					dateReport = datePicker1.getDate().toString();
+					presenter.getReport(dateReport);
+				}
+			}
+		});
 		datePicker1.setBounds(51, 5, 200, 35);
 		datePicker1.getComponentToggleCalendarButton().setBounds(174, 0, 26, 35);
 		datePicker1.getComponentDateTextField().setBounds(0, 0, 171, 35);

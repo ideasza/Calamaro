@@ -49,15 +49,17 @@ public class SettingsPresenter implements SettingsInterface.Presenter {
 	public void requestMoneyBegin() {
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
-		sb.append("SELECT money_value FROM MoneyConfig ORDER BY money_id DESC LIMIT 1");
+		sb.append("SELECT money_value ");
+		sb.append("FROM MoneyConfig ");
+		sb.append("ORDER BY money_id DESC LIMIT 1");
 		connectionDB = new ConnectionDB();
 		try {
-			resultSet = null;
-			System.out.println(resultSet.getString("money_value").toString());
 			resultSet = connectionDB.dbQuery(sb.toString());
-			view.setMoneyToTextFeild(resultSet);
+			String money = resultSet.getString("money_value");
+			view.setMoneyToTextFeild(money);
 		} catch(Exception e) {
 			resultSet = null;
+			System.out.println("Error: " + e.getMessage());
 			connectionDB.closeAllTransaction();
 		}
 		connectionDB.closeAllTransaction();

@@ -49,6 +49,8 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class SettingsActivity extends JDialog implements SettingsInterface.View {
 
@@ -59,6 +61,7 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
     public SettingsActivity(Frame owner) {
         super(owner);
         createGUI();
+        presenter.requestMoneyBegin();
     }
 
     /**
@@ -67,22 +70,24 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
     public SettingsActivity(Dialog owner) {
         super(owner);        
         createGUI();
+        presenter.requestMoneyBegin();
     }
     
     private Preferrence prefs;
     private SettingsInterface.Presenter presenter;
+    private DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
     
     private javax.swing.JPanel topPanel;
     
     private JFileChooser chooser = new JFileChooser();;
     private File file;
 
+    private JLabel lblNewLabel;
     private JTextField textField;
     private JTextField textField_1;
     private void createGUI() {
     	prefs = new Preferrence();
     	presenter = new SettingsPresenter(this);
-    	presenter.requestMoneyBegin();
     	int width = 680;
     	int height = 480;
     	setBounds(0, 0, 681, 350);
@@ -144,8 +149,19 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
     	textField_1 = new JTextField();
     	textField_1.setFont(new Font("Angsana New", Font.PLAIN, 25));
     	textField_1.setColumns(10);
-    	textField_1.setBounds(60, 45, 425, 40);
+    	textField_1.setBounds(60, 49, 425, 40);
     	panel.add(textField_1);
+    	
+    	JLabel label = new JLabel("เงินตั้งต้น -->");
+    	label.setEnabled(false);
+    	label.setFont(new Font("Tahoma", Font.PLAIN, 13));
+    	label.setBounds(60, 20, 79, 25);
+    	panel.add(label);
+    	
+    	lblNewLabel = new JLabel("");
+    	lblNewLabel.setEnabled(false);
+    	lblNewLabel.setBounds(140, 20, 173, 25);
+    	panel.add(lblNewLabel);
     	
     	button.addActionListener(new ActionListener() {
 			
@@ -217,16 +233,15 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
 	}
 
 	@Override
-	public void setMoneyToTextFeild(ResultSet rs) {
+	public void setMoneyToTextFeild(String money) {
 		try {
-			if (rs.next()) {
-				textField_1.setText(rs.getString("money_value").toString());
-				System.out.println(rs.getString("money_value").toString());
+			if (!money.isEmpty()) {
+				lblNewLabel.setText(decimalFormat.format(Float.parseFloat(money.trim())));
 			} else {
-				textField_1.setText("");
+				lblNewLabel.setText("");
 			}
-		} catch (SQLException e) {
-			textField_1.setText("");
+		} catch (Exception e) {
+			lblNewLabel.setText("");
 			e.printStackTrace();
 		}
 	}

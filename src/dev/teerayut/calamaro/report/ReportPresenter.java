@@ -31,9 +31,13 @@ import jxl.write.WriteException;
 
 public class ReportPresenter implements ReportInterface.Presenter {
 	
+	
 	private float GrandTotal = 0;
+	private float MoneyBalance = 0;
 	private float GrandAmountBuy = 0;
 	private float GrandAmountSell = 0;
+	private float AmountBuy = 0;
+	private float AmountSell = 0;
 	private DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
 	
 	private String fileName;
@@ -175,14 +179,21 @@ public class ReportPresenter implements ReportInterface.Presenter {
 	    	    float grandAmountBuy = Float.parseFloat(m.getReportBuyRate().trim());
 	    	    float grandAmountSell = Float.parseFloat(m.getReportSellRate().trim());
 	    	    float grandTotal = Float.parseFloat(m.getReportTotal().trim());
+	    	    float amountBuy = (m.getReportType().equals("Buy")) ? Float.parseFloat(m.getReportTotal().trim()) : 0;
+	    	    float amountSell = (m.getReportType().equals("Sell")) ? Float.parseFloat(m.getReportAmount().trim()) : 0;
 	    	    GrandAmountBuy += grandAmountBuy;
 	    	    GrandAmountSell += grandAmountSell;
 	    	    GrandTotal += grandTotal;
+	    	    AmountBuy += amountBuy;
+	    	    AmountSell += amountSell;
+	    	    
 	    	    
 	    	    ws1.addCell(new Label(4, (calculateModelsList.size() + 2), new Convert().formatDecimal(GrandAmountBuy), cellFormat4));
 	    	    ws1.addCell(new Label(5, (calculateModelsList.size() + 2), new Convert().formatDecimal(GrandAmountSell), cellFormat4));
 	    	    ws1.addCell(new Label(6, (calculateModelsList.size() + 2), new Convert().formatDecimal(GrandTotal), cellFormat4));
     	    }
+    	    
+    	    System.out.println("ยอดรวม : " + AmountBuy + "\n" + AmountSell);
 
     	    workbook.write();
     	    workbook.close();
@@ -218,6 +229,26 @@ public class ReportPresenter implements ReportInterface.Presenter {
 		}
 		return null;
 		
+	}
+	
+	private float getMoneyBegin() {
+		StringBuilder sb = new StringBuilder();
+		sb.delete(0, sb.length());
+		sb.append("SELECT money_value ");
+		sb.append("FROM MoneyConfig ");
+		sb.append("ORDER BY money_id DESC LIMIT 1");
+		connectionDB = new ConnectionDB();
+		try {
+			resultSet = connectionDB.dbQuery(sb.toString());
+			String money = resultSet.getString("money_value");
+			return Float.parseFloat(money);
+		} catch(Exception e) {
+			resultSet = null;
+			System.out.println("Error: " + e.getMessage());
+			connectionDB.closeAllTransaction();
+		}
+		connectionDB.closeAllTransaction();
+		return 0;
 	}
 
 }

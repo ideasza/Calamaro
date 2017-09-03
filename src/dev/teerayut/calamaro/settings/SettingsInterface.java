@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 public interface SettingsInterface {
 
 	public interface View {
-		void setMoneyToTextFeild(ResultSet rs);
+		void setMoneyToTextFeild(String money);
 		void onSuccess(String success);
 		void onFail(String fail);
 	}
