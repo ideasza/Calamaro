@@ -16,6 +16,8 @@ import java.nio.file.CopyOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -43,8 +45,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import dev.teerayut.calamaro.utils.Config;
 import dev.teerayut.calamaro.utils.Preferrence;
 import dev.teerayut.calamaro.utils.ScreenCenter;
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
+import javax.swing.UIManager;
+import java.awt.Color;
 
-public class SettingsActivity extends JDialog{
+public class SettingsActivity extends JDialog implements SettingsInterface.View {
 
 	public static final int ID_OK = 1;
     public static final int ID_CANCEL = 0;
@@ -64,6 +70,7 @@ public class SettingsActivity extends JDialog{
     }
     
     private Preferrence prefs;
+    private SettingsInterface.Presenter presenter;
     
     private javax.swing.JPanel topPanel;
     
@@ -71,25 +78,28 @@ public class SettingsActivity extends JDialog{
     private File file;
 
     private JTextField textField;
+    private JTextField textField_1;
     private void createGUI() {
     	prefs = new Preferrence();
+    	presenter = new SettingsPresenter(this);
+    	presenter.requestMoneyBegin();
     	int width = 680;
     	int height = 480;
-    	setBounds(0, 0, 681, 248);
+    	setBounds(0, 0, 681, 350);
     	setTitle("ตั้งค่า");
     	setIconImage(new ImageIcon(getClass().getResource("/ic_calamaro.png")).getImage());
     	new ScreenCenter().centreWindow(this);
     	getContentPane().setLayout(null);
     	
     	topPanel = new javax.swing.JPanel();
-    	topPanel.setBounds(0, 0, 660, 135);
+    	topPanel.setBounds(0, 116, 660, 121);
     	topPanel.setBorder(BorderFactory.createTitledBorder("Database"));
     	getContentPane().add(topPanel);
     	topPanel.setLayout(null);
     	
     	textField = new JTextField();
     	textField.setFont(new Font("Angsana New", Font.PLAIN, 25));
-    	textField.setBounds(60, 53, 425, 40);
+    	textField.setBounds(60, 45, 425, 40);
     	topPanel.add(textField);
     	textField.setColumns(10);
     	
@@ -110,7 +120,7 @@ public class SettingsActivity extends JDialog{
                 }
     		}
     	});
-    	btnNewButton.setBounds(497, 53, 97, 40);
+    	btnNewButton.setBounds(497, 45, 97, 40);
     	topPanel.add(btnNewButton);
         
         
@@ -121,16 +131,30 @@ public class SettingsActivity extends JDialog{
     	
     	
     	JButton button = new JButton("ตกลง");
-    	button.setBounds(554, 148, 97, 40);
+    	button.setBounds(554, 250, 97, 40);
     	getContentPane().add(button);
     	button.setPreferredSize(new Dimension(90, 35));
+    	
+    	JPanel panel = new JPanel();
+    	panel.setLayout(null);
+    	panel.setBorder(new TitledBorder(null, "\u0E40\u0E07\u0E34\u0E19\u0E15\u0E31\u0E49\u0E07\u0E15\u0E49\u0E19", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    	panel.setBounds(0, 0, 660, 113);
+    	getContentPane().add(panel);
+    	
+    	textField_1 = new JTextField();
+    	textField_1.setFont(new Font("Angsana New", Font.PLAIN, 25));
+    	textField_1.setColumns(10);
+    	textField_1.setBounds(60, 45, 425, 40);
+    	panel.add(textField_1);
+    	
     	button.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				prefs.setPreferrence("db_path", textField.getText().toString());
-        		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
-		        JOptionPane.showMessageDialog(null, "บันทึกการตั้งค่าแล้ว", "Complete", JOptionPane.ERROR_MESSAGE, icon);
+				presenter.insertMoneyBegin(textField_1.getText().toString());
+        		/*final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
+		        JOptionPane.showMessageDialog(null, "บันทึกการตั้งค่าแล้ว", "Complete", JOptionPane.ERROR_MESSAGE, icon);*/
 		        dispose();
 		        
 			}
@@ -176,6 +200,33 @@ public class SettingsActivity extends JDialog{
 			    }
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onSuccess(String success) {
+		final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
+		JOptionPane.showMessageDialog(null, success, "Success", JOptionPane.INFORMATION_MESSAGE, icon);
+	}
+
+	@Override
+	public void onFail(String fail) {
+		final ImageIcon icon = new ImageIcon(getClass().getResource("/fail32.png"));
+        JOptionPane.showMessageDialog(null, fail, "Alert", JOptionPane.ERROR_MESSAGE, icon);
+	}
+
+	@Override
+	public void setMoneyToTextFeild(ResultSet rs) {
+		try {
+			if (rs.next()) {
+				textField_1.setText(rs.getString("money_value").toString());
+				System.out.println(rs.getString("money_value").toString());
+			} else {
+				textField_1.setText("");
+			}
+		} catch (SQLException e) {
+			textField_1.setText("");
 			e.printStackTrace();
 		}
 	}

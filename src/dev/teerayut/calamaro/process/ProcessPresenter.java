@@ -48,29 +48,15 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 				psmt.setString(9, new DateFormate().getDateOnly());
 				is = psmt.executeUpdate();
 			}
-			int [] numUpdates = psmt.executeBatch();
-			for (int i=0; i < numUpdates.length; i++) {
-			    if (numUpdates[i] == -2) {
-			      System.out.println("Execution " + i + 
-			        ": unknown number of rows updated");
-			      view.onFail("ไม่สามารถบันทึกข้อมูลได้");
-			    } else {
-			      System.out.println("Execution " + i + 
-			        "successful: " + numUpdates[i] + " rows updated");
-			      new Receive().printReceipt(calList);
-					view.onSuccess("บันทึกรายการซื้อขายแล้ว");
-					calculateList.clear();
-					connectionDB.dbCommit();
-			    }
-			}
-			/*if (is == 1) {
+			if (is == 1) {
 				new Receive().printReceipt(calList);
 				view.onSuccess("บันทึกรายการซื้อขายแล้ว");
 				calculateList.clear();
 				connectionDB.closeAllTransaction();
 			} else {
+				connectionDB.closeAllTransaction();
 				view.onFail("ไม่สามารถบันทึกข้อมูลได้");
-			}*/
+			}
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
 			view.onFail("Insert receipt : " + e.getMessage());

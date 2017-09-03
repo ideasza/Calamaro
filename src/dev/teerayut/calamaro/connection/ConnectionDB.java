@@ -114,7 +114,7 @@ public class ConnectionDB {
 		 try {
 			 conn = connect();
 			 pstmt = conn.prepareStatement(statement);
-			 conn.setAutoCommit(false);
+			 conn.setAutoCommit(true);
 		 } catch (Exception e) {
 			 pstmt = null;
 			 dbCloseTransaction(stm, conn);

@@ -433,16 +433,17 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 			//prefixKey = key[0];
 			running = Integer.parseInt(key[1]);
 			running++;
+			System.out.println("Running: " + running);
 			if (running < 10) {
 				runningFormat = "000" + running;
 				//runningFormat = String.format("%04d", running);
-			} else if (running > 10 && running < 100) {
+			} else if (running >= 10 && running < 100) {
 				runningFormat = "00" + running;
 				//runningFormat = String.format("%03d", running);
-			} else if (running > 100 && running < 1000) {
+			} else if (running >= 100 && running < 1000) {
 				runningFormat = "0" + running;
 				//runningFormat = String.format("%02d", running);
-			} else if (running > 1000 && running < 10000) {
+			} else if (running >= 1000 && running < 10000) {
 				runningFormat = "" + running;
 			} else {
 				runningFormat = "0001";
