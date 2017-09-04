@@ -3,6 +3,7 @@ package dev.teerayut.calamaro.report;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -17,6 +18,7 @@ import dev.teerayut.calamaro.connection.ConnectionDB;
 import dev.teerayut.calamaro.model.CalculateModel;
 import dev.teerayut.calamaro.utils.Config;
 import dev.teerayut.calamaro.utils.Convert;
+import dev.teerayut.calamaro.utils.DateFormate;
 import jxl.Workbook;
 import jxl.format.Alignment;
 import jxl.format.Colour;
@@ -41,8 +43,11 @@ public class ReportPresenter implements ReportInterface.Presenter {
 	private float AmountSell = 0;
 	private DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
 	
+	private String moneyBegin;
+	private String moneyID;
 	private String fileName;
 	private ResultSet resultSet;
+	private PreparedStatement psmt;
 	private ConnectionDB connectionDB;
 	private CalculateModel calculateModel;
 	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -57,7 +62,7 @@ public class ReportPresenter implements ReportInterface.Presenter {
 	@Override
 	public void getReport(String date) {
 		calculateModelsList.clear();
-		MoneyBegin = getMoneyBegin();
+		getMoneyBegin();
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
 		sb.append("SELECT * FROM Report ");
@@ -217,7 +222,7 @@ public class ReportPresenter implements ReportInterface.Presenter {
 	    	    ws1.addCell(new Label(5, (calculateModelsList.size() + 5), new Convert().formatDecimal(AmountBuy), cellFormat4));
 	    	    ws1.addCell(new Label(6, (calculateModelsList.size() + 6), new Convert().formatDecimal(MoneyBalance), cellFormat4));
     	    }
-    	    
+    	    updateMoneyBalanceToDB(String.valueOf(MoneyBalance));
     	    //System.out.println("ยอดรวมซื้อ : " + AmountBuy + "\nยอดรวมขาย :" + AmountSell);
 
     	    workbook.write();
@@ -256,24 +261,50 @@ public class ReportPresenter implements ReportInterface.Presenter {
 		
 	}
 	
-	private float getMoneyBegin() {
+	private void getMoneyBegin() {
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
-		sb.append("SELECT money_value ");
+		sb.append("SELECT money_id, money_value ");
 		sb.append("FROM MoneyConfig ");
 		sb.append("ORDER BY money_id DESC LIMIT 1");
 		connectionDB = new ConnectionDB();
 		try {
 			resultSet = connectionDB.dbQuery(sb.toString());
-			String money = resultSet.getString("money_value");
-			return Float.parseFloat(money);
+			moneyID = resultSet.getString("money_id");
+			moneyBegin = resultSet.getString("money_value");
+			MoneyBegin = Float.parseFloat(moneyBegin);
 		} catch(Exception e) {
 			resultSet = null;
 			System.out.println("Error: " + e.getMessage());
 			connectionDB.closeAllTransaction();
 		}
 		connectionDB.closeAllTransaction();
-		return 0;
+	}
+	
+	private void updateMoneyBalanceToDB(String balance) {
+		StringBuilder sb = new StringBuilder();
+		sb.delete(0, sb.length());
+		sb.append("UPDATE MoneyConfig ");
+		sb.append("SET money_balance = ?, money_update_date = ? ");
+		//sb.append("VALUES (" + balance + ", " + new DateFormate().getDate() + ") ");
+		sb.append("WHERE money_id = ?");
+		connectionDB = new ConnectionDB();
+		int is = 0;
+		try {
+			psmt = connectionDB.dbInsert(sb.toString());
+			psmt.setString(1, balance);
+			psmt.setString(2, new DateFormate().getDate());
+			psmt.setString(3, moneyID);
+			is = psmt.executeUpdate();
+			if (is == 1) {
+				connectionDB.closeAllTransaction();
+			} else {
+				connectionDB.closeAllTransaction();
+			}
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+			connectionDB.closeAllTransaction();
+		}
 	}
 
 }
