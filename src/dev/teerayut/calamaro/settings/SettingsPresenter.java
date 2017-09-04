@@ -32,7 +32,7 @@ public class SettingsPresenter implements SettingsInterface.Presenter {
 			psmt.setString(2, new DateFormate().getDate());
 			is = psmt.executeUpdate();
 			if (is == 1) {
-				view.onSuccess("บันทึกข้อมูลแล้ว");
+				//view.onSuccess("บันทึกข้อมูลแล้ว");
 				connectionDB.closeAllTransaction();
 			} else {
 				connectionDB.closeAllTransaction();

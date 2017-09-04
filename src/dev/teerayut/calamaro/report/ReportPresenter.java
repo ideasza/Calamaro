@@ -33,6 +33,7 @@ public class ReportPresenter implements ReportInterface.Presenter {
 	
 	
 	private float GrandTotal = 0;
+	private float MoneyBegin = 0;
 	private float MoneyBalance = 0;
 	private float GrandAmountBuy = 0;
 	private float GrandAmountSell = 0;
@@ -56,6 +57,7 @@ public class ReportPresenter implements ReportInterface.Presenter {
 	@Override
 	public void getReport(String date) {
 		calculateModelsList.clear();
+		MoneyBegin = getMoneyBegin();
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
 		sb.append("SELECT * FROM Report ");
@@ -91,7 +93,7 @@ public class ReportPresenter implements ReportInterface.Presenter {
 			 if (file.mkdirs()) {
 				 fileName = Config.REPORT_PATH + date + ".xls";
 		    } else {
-		    	final ImageIcon icon = new ImageIcon(getClass().getResource("/icon/fail32.png"));
+		    	final ImageIcon icon = new ImageIcon(getClass().getResource("/fail32.png"));
 		    	JOptionPane.showMessageDialog(null, "ไม่สามารถสร้างโพลเดอร์ได้", "Alert", JOptionPane.ERROR_MESSAGE, icon);
 		    }
 		} else {
@@ -171,14 +173,20 @@ public class ReportPresenter implements ReportInterface.Presenter {
 	    	    ws1.addCell(new Label(2, (i + 2), m.getReportCurrency().trim(), cellFormat2));
 	    	    ws1.addCell(new Label(3, (i + 2), m.getReportBuyRate().trim(), cellFormat2));
 	    	    ws1.addCell(new Label(4, (i + 2), m.getReportSellRate().trim(), cellFormatCurrency));
-	    	    ws1.addCell(new Label(5, (i + 2), decimalFormat.format(Float.parseFloat(m.getReportAmount().trim())), cellFormatCurrency)); 
-	 	    	ws1.addCell(new Label(6, (i + 2), decimalFormat.format(Double.parseDouble(m.getReportTotal().trim())), cellFormatCurrency)); 
+	    	    //ws1.addCell(new Label(5, (i + 2), decimalFormat.format(Float.parseFloat(m.getReportAmount().trim())), cellFormatCurrency)); 
+	    	    //ws1.addCell(new Label(6, (i + 2), decimalFormat.format(Double.parseDouble(m.getReportTotal().trim())), cellFormatCurrency)); 
+	    	    ws1.addCell(new Label(5, (i + 2), decimalFormat.format(
+	    	    		Double.parseDouble((m.getReportType().equals("Buy")) ? m.getReportAmount().trim() : m.getReportTotal().trim())), 
+	    	    		cellFormatCurrency)); 
+	 	    	ws1.addCell(new Label(6, (i + 2), decimalFormat.format(
+	 	    			Double.parseDouble((m.getReportType().equals("Buy")) ? m.getReportTotal().trim() : m.getReportAmount().trim())), 
+	 	    			cellFormatCurrency)); 
 	    	    
-	    	    ws1.addCell(new Label(0, (calculateModelsList.size() + 2), "Grand Total" , cellFormat3));
+	    	    ws1.addCell(new Label(0, (calculateModelsList.size() + 2), "Grand Total", cellFormat3));
 	    	    
 	    	    float grandAmountBuy = Float.parseFloat(m.getReportBuyRate().trim());
 	    	    float grandAmountSell = Float.parseFloat(m.getReportSellRate().trim());
-	    	    float grandTotal = Float.parseFloat(m.getReportTotal().trim());
+	    	    float grandTotal = (m.getReportType().equals("Buy")) ? Float.parseFloat(m.getReportTotal().trim()) : Float.parseFloat(m.getReportAmount().trim());
 	    	    float amountBuy = (m.getReportType().equals("Buy")) ? Float.parseFloat(m.getReportTotal().trim()) : 0;
 	    	    float amountSell = (m.getReportType().equals("Sell")) ? Float.parseFloat(m.getReportAmount().trim()) : 0;
 	    	    GrandAmountBuy += grandAmountBuy;
@@ -187,13 +195,30 @@ public class ReportPresenter implements ReportInterface.Presenter {
 	    	    AmountBuy += amountBuy;
 	    	    AmountSell += amountSell;
 	    	    
+	    	    if (AmountBuy > 0) {
+	    	    	MoneyBalance = MoneyBegin - AmountBuy;
+	    	    } else {
+	    	    	MoneyBalance = MoneyBegin;
+	    	    }
 	    	    
-	    	    ws1.addCell(new Label(4, (calculateModelsList.size() + 2), new Convert().formatDecimal(GrandAmountBuy), cellFormat4));
-	    	    ws1.addCell(new Label(5, (calculateModelsList.size() + 2), new Convert().formatDecimal(GrandAmountSell), cellFormat4));
+	    	    if (AmountSell > 0) {
+	    	    	MoneyBalance = MoneyBalance + AmountSell;
+	    	    }
+	    	    
+	    	    //ws1.addCell(new Label(3, (calculateModelsList.size() + 2), new Convert().formatDecimal(GrandAmountBuy), cellFormat4));
+	    	    //ws1.addCell(new Label(4, (calculateModelsList.size() + 2), new Convert().formatDecimal(GrandAmountSell), cellFormat4));
 	    	    ws1.addCell(new Label(6, (calculateModelsList.size() + 2), new Convert().formatDecimal(GrandTotal), cellFormat4));
+	    	    
+	    	    ws1.addCell(new Label(0,(calculateModelsList.size() + 4), "ยอดรับเงินไทย", cellFormat3));
+	    	    ws1.addCell(new Label(0,(calculateModelsList.size() + 5), "ยอดจ่ายเงินไทย", cellFormat3));
+	    	    ws1.addCell(new Label(0,(calculateModelsList.size() + 6), "ยอดเงินคงเหลือ", cellFormat3));
+	    	    
+	    	    ws1.addCell(new Label(6, (calculateModelsList.size() + 4), new Convert().formatDecimal(AmountSell), cellFormat4));
+	    	    ws1.addCell(new Label(5, (calculateModelsList.size() + 5), new Convert().formatDecimal(AmountBuy), cellFormat4));
+	    	    ws1.addCell(new Label(6, (calculateModelsList.size() + 6), new Convert().formatDecimal(MoneyBalance), cellFormat4));
     	    }
     	    
-    	    System.out.println("ยอดรวม : " + AmountBuy + "\n" + AmountSell);
+    	    //System.out.println("ยอดรวมซื้อ : " + AmountBuy + "\nยอดรวมขาย :" + AmountSell);
 
     	    workbook.write();
     	    workbook.close();
@@ -208,7 +233,7 @@ public class ReportPresenter implements ReportInterface.Presenter {
 			calculateModelsList.clear();
 			Desktop.getDesktop().open(new File(Config.REPORT_PATH));
 		} catch (IOException e) {
-			final ImageIcon icon = new ImageIcon(getClass().getResource("/icon/fail32.png"));
+			final ImageIcon icon = new ImageIcon(getClass().getResource("/fail32.png"));
             JOptionPane.showMessageDialog(null, e.getMessage(), "Alert", JOptionPane.ERROR_MESSAGE, icon);
 		}
 	}

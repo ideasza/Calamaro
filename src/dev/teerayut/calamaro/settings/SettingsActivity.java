@@ -51,6 +51,8 @@ import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class SettingsActivity extends JDialog implements SettingsInterface.View {
 
@@ -147,6 +149,15 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
     	getContentPane().add(panel);
     	
     	textField_1 = new JTextField();
+    	textField_1.addKeyListener(new KeyAdapter() {
+    		@Override
+    		public void keyPressed(KeyEvent e) {
+    			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+    				presenter.insertMoneyBegin(textField_1.getText().toString());
+    				presenter.requestMoneyBegin();
+    			}
+    		}
+    	});
     	textField_1.setFont(new Font("Angsana New", Font.PLAIN, 25));
     	textField_1.setColumns(10);
     	textField_1.setBounds(60, 49, 425, 40);
