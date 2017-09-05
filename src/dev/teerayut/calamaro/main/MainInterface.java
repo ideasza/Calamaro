@@ -12,11 +12,13 @@ public interface MainInterface {
 		void onFail(String fail);
 		void setCurrencyItem(ResultSet resultSet);
 		void onProcessCurrency(ResultSet resultSet);
+		void onCheckMoneyBalance(float begin, float balance);
 	}
 	
 	public interface Presenter {
 		void requestCurrency();
 		void getCurrency(String code);
+		void getMoneyBalance();
 	}
 
 }

@@ -5,10 +5,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import dev.teerayut.calamaro.connection.ConnectionDB;
+import dev.teerayut.calamaro.utils.DateFormate;
 
 
 public class MainPresenter implements MainInterface.Presenter {
 	
+	private float MoneyBegin = 0;
+	private float MoneyBalance = 0;
+	private float AmountBuy = 0;
+	private float AmountSell = 0;
 	private ResultSet resultSet;
 	private PreparedStatement psmt;
 	private ConnectionDB connectionDB;
@@ -69,4 +74,67 @@ public class MainPresenter implements MainInterface.Presenter {
 		connectionDB.closeAllTransaction();
 	}
 
+	@Override
+	public void getMoneyBalance() {
+		MoneyBegin = getMoneyBegin();
+		MoneyBalance = 0;
+		getTotalUsage();
+		if (AmountBuy == 0 && AmountSell == 0) {
+			MoneyBalance = MoneyBegin;
+		} else {
+			if (AmountBuy > 0) {
+		    	MoneyBalance = MoneyBegin - AmountBuy;
+		    } 
+			
+			if (AmountSell > 0) {
+		    	MoneyBalance = MoneyBalance + AmountSell;
+		    }
+		}
+		view.onCheckMoneyBalance(MoneyBegin, MoneyBalance);
+	}
+	
+	private float getMoneyBegin() {
+		StringBuilder sb = new StringBuilder();
+		sb.delete(0, sb.length());
+		sb.append("SELECT money_id, money_value ");
+		sb.append("FROM MoneyConfig ");
+		sb.append("ORDER BY money_id DESC LIMIT 1");
+		connectionDB = new ConnectionDB();
+		try {
+			resultSet = connectionDB.dbQuery(sb.toString());
+			MoneyBegin = Float.parseFloat(resultSet.getString("money_value"));
+		} catch(Exception e) {
+			System.out.println("Error: " + e.getMessage());
+			connectionDB.closeAllTransaction();
+			return 0;
+		}
+		connectionDB.closeAllTransaction();
+		return MoneyBegin;
+	}
+	
+	private void getTotalUsage() {
+		AmountBuy = 0;
+		AmountSell = 0;
+		StringBuilder sb = new StringBuilder();
+		sb.delete(0, sb.length());
+		sb.append("SELECT report_type, report_amount, report_total FROM Report ");
+		sb.append("WHERE report_date LIKE '"+ new DateFormate().getDateOnly() +"%' ");
+		connectionDB = new ConnectionDB();
+		try {
+			resultSet = connectionDB.dbQuery(sb.toString());
+			while(resultSet.next()) {
+				if (resultSet.getString("report_type").equals("Buy")) {
+					AmountBuy += Float.parseFloat(resultSet.getString("report_total"));
+				} else if (resultSet.getString("report_type").equals("Sell")) {
+					AmountSell += Float.parseFloat(resultSet.getString("report_amount"));
+				}
+			}
+			connectionDB.closeAllTransaction();
+		} catch (Exception e) {
+			System.out.println("Get Total query : " + e.getLocalizedMessage());
+			e.printStackTrace();
+			connectionDB.closeAllTransaction();
+		}
+		connectionDB.closeAllTransaction();
+	}
 }

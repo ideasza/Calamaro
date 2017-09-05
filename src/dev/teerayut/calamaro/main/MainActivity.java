@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,6 +58,7 @@ import dev.teerayut.calamaro.settings.SettingsActivity;
 import dev.teerayut.calamaro.show.ShowActivity;
 import dev.teerayut.calamaro.update.UpdateActivity;
 import dev.teerayut.calamaro.utils.Config;
+import dev.teerayut.calamaro.utils.Convert;
 import dev.teerayut.calamaro.utils.DateFormate;
 import dev.teerayut.calamaro.utils.Preferrence;
 import dev.teerayut.calamaro.utils.ScreenCenter;
@@ -68,6 +70,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
+import java.awt.BorderLayout;
 
 
 public class MainActivity extends JFrame implements MainInterface.View{
@@ -131,6 +134,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	private javax.swing.JLabel lblTime;
 	private JMenuItem menuItem;
 	private JMenuItem menuItem_1;
+	private JLabel lblNewLabel;
 	
 	private void initWidget() {
 		presenter = new MainPresenter(this);
@@ -162,6 +166,9 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		lblCoID = new javax.swing.JLabel();
 		lblSource = new javax.swing.JLabel();
 		lblTime = new javax.swing.JLabel();
+		lblNewLabel = new JLabel();
+		
+		presenter.getMoneyBalance();
 	}
 	
 	private void setTime(JLabel lbTime) {
@@ -199,10 +206,10 @@ public class MainActivity extends JFrame implements MainInterface.View{
 					lblSource.setText(" jdbc:sqlite: " + new File(Config.DB_PATH + Config.DB_FILE).getAbsolutePath().toString());
 	                lblSource.setIcon(new ImageIcon(getClass().getResource("/database_connect.png")));
 	        		presenter.requestCurrency();
-	        		/*if (!sc.isShowing()) {
+	        		if (!sc.isShowing()) {
 						sc.setLocation(moniter2);
 			            sc.setVisible(true);
-					}*/
+					}
 				} else {
 					prefs.setPreferrence("settings_open", "0");
 					edit.setEnabled(false);
@@ -249,6 +256,10 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		lblSource.setFont(new Font("Angsana New", Font.BOLD, 24));
 		lblSource.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
 		bottomPanel.add(lblSource, java.awt.BorderLayout.LINE_END);
+		
+		lblNewLabel.setFont(new Font("Angsana New", Font.BOLD, 20));
+		lblNewLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+		bottomPanel.add(lblNewLabel, BorderLayout.CENTER);
 		/****************************************************/
 		
 		SwingUtilities.invokeLater(new Runnable() {
@@ -290,9 +301,9 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		centerPanel.setLayout(new java.awt.BorderLayout());
 		getContentPane().add(centerPanel, java.awt.BorderLayout.CENTER);
 		
-		leftInnerCenter.setPreferredSize(new java.awt.Dimension(100, 40));
+		leftInnerCenter.setPreferredSize(new java.awt.Dimension(80, 40));
 		centerPanel.add(leftInnerCenter, java.awt.BorderLayout.WEST);
-		rightInnerCenter.setPreferredSize(new java.awt.Dimension(100, 40));
+		rightInnerCenter.setPreferredSize(new java.awt.Dimension(80, 40));
 		centerPanel.add(rightInnerCenter, java.awt.BorderLayout.EAST);
 
 		centerPanel.add(centerTop, java.awt.BorderLayout.CENTER);
@@ -310,12 +321,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		textField.requestFocus();
 		
 		centerBottom.add(centerRight, java.awt.BorderLayout.WEST);
-		
-		//System.out.println("Size: " + (w - 200) + ", " + (topPanel.getPreferredSize().getHeight() + centerBottom.getPreferredSize().getHeight()));
-		centerWidth = (w - 300);
-		centerHeight = h - (int)(topPanel.getPreferredSize().getHeight() + centerBottom.getPreferredSize().getHeight());
-		
-		//System.out.println("Size: " + centerWidth + ", " + centerHeight);
+		centerWidth = (w - 280);
+		centerHeight = (h - (int)(topPanel.getPreferredSize().getHeight() + centerBottom.getPreferredSize().getHeight()) - 40);
 	}
 	
 	private void menu() {
@@ -336,28 +343,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		menu.add(edit);
 		
 		report = new JMenu("\u0E23\u0E32\u0E22\u0E07\u0E32\u0E19");
-		/*report.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ReportActivity report = new ReportActivity(MainActivity.this);
-				if(report.doModal() == ReportActivity.ID_OK) {}
-				report.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				report.setModal(true);
-			}
-		});*/
 		menu.add(report);
-		
-		/*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date now = new Date();
-	    String strDate = sdf.format(now);
-	    
-		menuItem = new JMenuItem("รายงาน ณ วันที่ " + strDate);
-		menuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				createReport();
-			}
-		});
-		
-		report.add(menuItem);*/
 		
 		menuItem_1 = new JMenuItem("รายงาน");
 		menuItem_1.addActionListener(new ActionListener() {
@@ -445,9 +431,27 @@ public class MainActivity extends JFrame implements MainInterface.View{
 				flowCenter.setHgap(20);
 				flowCenter.setVgap(25);
 			} else if (w == 1024) {
-				itemPanelW = (int)(centerWidth / 3) + 40;
+				itemPanelW = (int)(centerWidth / 3) + 60;
 				flowCenter.setHgap(2);
 				flowCenter.setVgap(20);
+			}
+			
+			if (w == 1280 && h == 1024) {
+				itemPanelW = (int)(centerWidth / 5);
+				itemPanelH = itemPanelH - 5;
+			}
+			
+			if (w == 1400 && h == 1050 || w == 1680 && h == 1050) {
+				flowCenter.setHgap(15);
+				flowCenter.setVgap(10);
+				itemPanelW = (int)(centerWidth / 4);
+				itemPanelH = itemPanelH - 15;
+			}
+			
+			if (w == 800 && h == 600) {
+				itemPanelW = (int)(centerWidth / 3);
+				flowCenter.setHgap(10);
+				flowCenter.setVgap(10);
 			}
 			
 			centerTop.setLayout(flowCenter);
@@ -535,33 +539,15 @@ public class MainActivity extends JFrame implements MainInterface.View{
 			System.out.println("modal");
         } else {
         	textField.setText("");
+        	presenter.getMoneyBalance();
         }
 		processActivity.setLocationRelativeTo(null);
 		processActivity.setModal(true);
 	}
-	
-	/*@SuppressWarnings("deprecation")
-	private void createReport() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date now = new Date();
-	    String strDate = sdf.format(now);
-	    
-		BasicConfigurator.configure();
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("date", strDate);
-		
-		try {
-			String reportURL = "C:\\calamaro\\report\\template.jrxml";
-			File file = new File(reportURL);
-			file = file.getAbsoluteFile();
-			reportFile = file.getPath();
-			
-			JasperReport ir = JasperCompileManager.compileReport(reportFile);
-			JasperPrint ip = JasperFillManager.fillReport(ir, param, new ConnectionDB().connect());
-			JasperViewer.viewReport(ip, false);
-		} catch (JRException je) {
-			je.printStackTrace();
-			onFail("Report error: " + je.getMessage());
-		} 
-	}*/
+
+	@Override
+	public void onCheckMoneyBalance(float begin, float balance) {
+		DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
+		lblNewLabel.setText("                                                                    ยอดเงินตั้งต้น : " + decimalFormat.format(begin) + "         " + "ยอดเงินคงเหลือ : " + decimalFormat.format(balance));
+	}
 }

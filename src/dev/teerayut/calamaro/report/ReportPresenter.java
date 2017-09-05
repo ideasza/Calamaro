@@ -68,7 +68,6 @@ public class ReportPresenter implements ReportInterface.Presenter {
 		sb.append("SELECT * FROM Report ");
 		sb.append("WHERE report_date LIKE '"+ date +"%' ORDER BY report_id ASC");
 		connectionDB = new ConnectionDB();
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
 			resultSet = connectionDB.dbQuery(sb.toString());
 			while(resultSet.next()) {

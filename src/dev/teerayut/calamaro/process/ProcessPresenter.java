@@ -50,17 +50,18 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 			}
 			if (is == 1) {
 				new Receive().printReceipt(calList);
+				connectionDB.closeAllTransaction();
 				view.onSuccess("บันทึกรายการซื้อขายแล้ว");
 				calculateList.clear();
-				connectionDB.closeAllTransaction();
 			} else {
 				connectionDB.closeAllTransaction();
 				view.onFail("ไม่สามารถบันทึกข้อมูลได้");
 			}
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
-			view.onFail("Insert receipt : " + e.getMessage());
 			connectionDB.closeAllTransaction();
+			view.onFail("Insert receipt : " + e.getMessage());
+			
 		}
 	}
 	@Override
