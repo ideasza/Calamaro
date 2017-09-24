@@ -54,8 +54,8 @@ public class UpdatePresenter implements UpdateInterface.Presenter{
 		sb.append("currency_buy_rate = ?, ");
 		sb.append("currency_sell_rate = ? ");
 		sb.append("WHERE currency_id = ? ");
-		System.out.println(id + ", " + value1 + ", " + value2 + ", " + value3);
-		System.out.println(sb.toString());
+		//System.out.println(id + ", " + value1 + ", " + value2 + ", " + value3);
+		//System.out.println(sb.toString());
 		connectionDB = new ConnectionDB();
 		try {
 			psmt = connectionDB.dbUpdate(sb.toString());

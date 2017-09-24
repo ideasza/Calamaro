@@ -130,11 +130,11 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
 		
 		Leftpanel.setBackground(new Color(255, 204, 102));
-		Leftpanel.setPreferredSize(new java.awt.Dimension(15, height));
+		Leftpanel.setPreferredSize(new java.awt.Dimension(30, height));
 		getContentPane().add(Leftpanel, java.awt.BorderLayout.WEST);
 		
 		Rightpanel.setBackground(new Color(255, 204, 102));
-		Rightpanel.setPreferredSize(new java.awt.Dimension(15, height));
+		Rightpanel.setPreferredSize(new java.awt.Dimension(30, height));
 		getContentPane().add(Rightpanel, java.awt.BorderLayout.EAST);
 		
 		getContentPane().add(scrollPane, java.awt.BorderLayout.CENTER);
@@ -144,7 +144,7 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		Bottompanel.setBackground(new Color(255, 204, 102));
 		
 		lblCompanyName.setForeground(new Color(0, 0, 0));
-		lblCompanyName.setFont(new Font("Angsana New", Font.BOLD, 70));
+		lblCompanyName.setFont(new Font("Angsana New", Font.BOLD, 60));
 		lblCompanyName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 		topPanel.add(lblCompanyName, java.awt.BorderLayout.CENTER);
 		lblCompanyName.setIcon(new ImageIcon(getClass().getResource("/ic_calamaro.png")));
@@ -204,10 +204,10 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		table.setModel(model);
 		table.setFont(new Font("Tahoma", Font.BOLD, 50));
 		
-		int screenHeight = h;
-		int scrollWidth = w;
+		int screenHeight = height;
+		int scrollWidth = width;
 		int colWidth = (scrollWidth - 30);
-		int columnsWidth = (w / 6);
+		int columnsWidth = (colWidth / 4);
 		int smCol = (columnsWidth / 8);
 		int mdCol = (columnsWidth / 4);
 		int rowHeight = screenHeight;
@@ -230,11 +230,11 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		table.getTableHeader().setReorderingAllowed(false);
 		table.getTableHeader().setResizingAllowed(false);
 		
-		table.getColumnModel().getColumn(0).setPreferredWidth(columnsWidth - (mdCol + smCol) );
-		table.getColumnModel().getColumn(1).setPreferredWidth(columnsWidth + (smCol * 2));
-		table.getColumnModel().getColumn(2).setPreferredWidth(columnsWidth + smCol);
-		table.getColumnModel().getColumn(3).setPreferredWidth(columnsWidth + smCol);
-		table.setRowHeight(rowHeight / 7);
+		table.getColumnModel().getColumn(0).setPreferredWidth(mdCol);
+		table.getColumnModel().getColumn(1).setPreferredWidth(columnsWidth - mdCol);
+		table.getColumnModel().getColumn(2).setPreferredWidth(columnsWidth + (smCol / 2));
+		table.getColumnModel().getColumn(3).setPreferredWidth(columnsWidth + (smCol / 2));
+		table.setRowHeight((rowHeight / 7) + (smCol / 3));
 		
 		/*DefaultTableCellRenderer centerRender = new DefaultTableCellRenderer();
 		centerRender.setHorizontalAlignment(JLabel.CENTER);
@@ -255,7 +255,7 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		
 		DefaultTableCellRenderer leftRender = new DefaultTableCellRenderer();
 		leftRender.setHorizontalAlignment(JLabel.CENTER);
-		leftRender.setFont(new Font("Tahoma", Font.BOLD, 100));
+		leftRender.setFont(new Font("Tahoma", Font.BOLD, 80));
 		table.getColumnModel().getColumn(1).setCellRenderer(leftRender);
 		
 		table.getColumnModel().getColumn(0).setCellRenderer(new tableImageRenderrer());

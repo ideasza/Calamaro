@@ -180,8 +180,9 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
 			public void actionPerformed(ActionEvent arg0) {
 				prefs.setPreferrence("db_path", textField.getText().toString());
 				presenter.insertMoneyBegin(textField_1.getText().toString());
-        		/*final ImageIcon icon = new ImageIcon(getClass().getResource("/success32.png"));
-		        JOptionPane.showMessageDialog(null, "บันทึกการตั้งค่าแล้ว", "Complete", JOptionPane.ERROR_MESSAGE, icon);*/
+				if (!textField_1.getText().toString().isEmpty()) {
+					presenter.insertMoneyBegin(textField_1.getText().toString());
+				}
 		        dispose();
 		        
 			}

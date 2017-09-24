@@ -59,7 +59,7 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     private int columns;
     private String currecyType;
     private String currencyCode;
-    private List<CurrencyItem> currencyItemList = new ArrayList<CurrencyItem>();
+    private List<CurrencyItem> currencyItemList = new ArrayList<>();
     
     private CalculateModel calculateModel;
     private List<CalculateModel> calculateModelList = new ArrayList<CalculateModel>();
@@ -171,18 +171,18 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     
     private void createGUI() {
     	iniWidget();
-    	int width = 840;
+    	int width = 760;
     	int height = 410;
-    	setBounds(0, 0, 680, 320);
+    	setBounds(0, 0, 760, 320);
     	setTitle("CALAMARO");
     	setIconImage(new ImageIcon(getClass().getResource("/ic_calamaro.png")).getImage());
     	new ScreenCenter().centreWindow(this);
     	getContentPane().setLayout(new java.awt.BorderLayout());   	
     	
-    	topPanel.setPreferredSize(new java.awt.Dimension(800, 25));
+    	topPanel.setPreferredSize(new java.awt.Dimension(750, 25));
     	getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
     	
-    	centerPanel.setPreferredSize(new java.awt.Dimension(800, 200));
+    	centerPanel.setPreferredSize(new java.awt.Dimension(750, 200));
     	getContentPane().add(centerPanel, java.awt.BorderLayout.CENTER);
     	
     	leftPanel.setPreferredSize(new java.awt.Dimension(10, 200));
@@ -191,7 +191,7 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     	rightPanel.setPreferredSize(new java.awt.Dimension(10, 200));
     	getContentPane().add(rightPanel, java.awt.BorderLayout.EAST);
     	
-    	bottomPanel.setPreferredSize(new java.awt.Dimension(800, 60));
+    	bottomPanel.setPreferredSize(new java.awt.Dimension(750, 60));
     	getContentPane().add(bottomPanel, java.awt.BorderLayout.SOUTH);
     	bottomPanel.setLayout(new BorderLayout(0, 0));
     	
@@ -297,7 +297,7 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 		tableScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		centerPanel.add(tableScroll);
 		
-		int tableWidth = (800 / 4);
+		int tableWidth = (750 / 4);
 		JTableHeader header = table.getTableHeader();
     	header.setPreferredSize(new Dimension(tableWidth, 40));
 		table.getTableHeader().setFont(new Font("Angsana New", Font.BOLD, 24));
@@ -357,11 +357,13 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     private void setItemToTable() {
     	for (int i = 0; i < currencyItemList.size(); i++) {
     		CurrencyItem item = currencyItemList.get(i);
-    		model.addRow(new Object[] {item.getName(), 
+    		model.addRow(new Object[] {
+    				item.getName(), 
     				new Convert().formatDecimal(
     						Float.parseFloat(
-    								(currencyCode.equals(item.getBuyCode())) ? item.getBuyRate() : item.getSellRate())), "", "0.00"});
-
+    								(currencyCode.equals(item.getBuyCode())) ? item.getBuyRate() : item.getSellRate())), "", "0.00"}
+    		);
+    		currencyCode = String.valueOf(Integer.parseInt(currencyCode) + 1);
     		if (currencyCode.equals(item.getBuyCode())) {
     			this.currecyType = "Buy";
     		} else if (currencyCode.equals(item.getSellCode())) {
@@ -433,7 +435,7 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 			//prefixKey = key[0];
 			running = Integer.parseInt(key[1]);
 			running++;
-			System.out.println("Running: " + running);
+			//System.out.println("Running: " + running);
 			if (running < 10) {
 				runningFormat = "000" + running;
 				//runningFormat = String.format("%04d", running);

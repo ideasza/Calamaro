@@ -293,7 +293,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		
 		lblCompanyName.setIcon(new ImageIcon(getClass().getResource("/ic_calamaro_tp.png")));
 		lblCompanyName.setText("CALAMARO EXCHANGE CO.,LTD.");
-		lblCoID.setText("เลขที่ผู้เสียภาษี 0815560001531");
+		//lblCoID.setText("เลขที่ผู้เสียภาษี 0815560001531");
 	}
 	
 	private void centerPanel() {
@@ -321,8 +321,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 		textField.requestFocus();
 		
 		centerBottom.add(centerRight, java.awt.BorderLayout.WEST);
-		centerWidth = (w - 280);
-		centerHeight = (h - (int)(topPanel.getPreferredSize().getHeight() + centerBottom.getPreferredSize().getHeight()) - 40);
+		centerWidth = (width - 280);
+		centerHeight = (height - (int)(topPanel.getPreferredSize().getHeight() + centerBottom.getPreferredSize().getHeight()) - 40);
 	}
 	
 	private void menu() {
@@ -335,7 +335,16 @@ public class MainActivity extends JFrame implements MainInterface.View{
 				UpdateActivity update = new UpdateActivity(MainActivity.this);
 				if(update.doModal() == UpdateActivity.ID_OK) {
 					
-		        } 
+		        } else {
+		        	currencyItems.clear();
+		        	if (currencyItems.size() > 0) {
+	                	currencyItems.clear();
+	                	presenter.requestCurrency();
+	                } else {
+	                	presenter.requestCurrency();
+	                }
+		        }
+				
 				update.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				update.setModal(true);
 			}
@@ -380,6 +389,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 							sc.setLocation(moniter2);
 				            sc.setVisible(true);
 						}
+		                
+		                presenter.getMoneyBalance();
 					}
 		        }
 				settings.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -392,7 +403,8 @@ public class MainActivity extends JFrame implements MainInterface.View{
 
 	@Override
 	public void setCurrencyItem(ResultSet resultSet) {
-		//currencyItems = new ArrayList<>();
+		currencyItems.clear();
+		centerTop.removeAll();
 		try {
 			while(resultSet.next()) {
 				item = new CurrencyItem();
@@ -441,11 +453,22 @@ public class MainActivity extends JFrame implements MainInterface.View{
 				itemPanelH = itemPanelH - 5;
 			}
 			
+			
+			
 			if (w == 1400 && h == 1050 || w == 1680 && h == 1050) {
 				flowCenter.setHgap(15);
 				flowCenter.setVgap(10);
 				itemPanelW = (int)(centerWidth / 4);
 				itemPanelH = itemPanelH - 15;
+			}
+			
+			if (w == 1366 && h == 768) {
+				itemPanelW = itemPanelW - 20;
+				itemPanelH = itemPanelH - 15;
+				flowCenter.setHgap(8);
+				flowCenter.setVgap(22);
+				lblCompanyName.setFont(new Font("Angsana New", Font.BOLD, 50));
+				lblCoID.setFont(new Font("Angsana New", Font.PLAIN, 25));
 			}
 			
 			if (w == 800 && h == 600) {
@@ -515,7 +538,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 
 	@Override
 	public void onProcessCurrency(ResultSet resultSet) {
-		this.currencyItemsList = new ArrayList<CurrencyItem>();
+		currencyItemsList = new ArrayList<>();
 		try {
 			while(resultSet.next()) {
 				item = new CurrencyItem();
@@ -524,7 +547,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 				item.setSellRate(resultSet.getString("currency_sell_rate").trim().toString());
 				item.setBuyCode(resultSet.getString("currency_buy_code").trim().toString());
 				item.setSellCode(resultSet.getString("currency_sell_code").trim().toString());
-				this.currencyItemsList.add(item);
+				currencyItemsList.add(item);
 			}
 			processDialog();
 		} catch (SQLException e) {
@@ -548,6 +571,6 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	@Override
 	public void onCheckMoneyBalance(float begin, float balance) {
 		DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
-		lblNewLabel.setText("                                                                    ยอดเงินตั้งต้น : " + decimalFormat.format(begin) + "         " + "ยอดเงินคงเหลือ : " + decimalFormat.format(balance));
+		lblCoID.setText("ยอดเงินตั้งต้น : " + decimalFormat.format(begin) + "         " + "ยอดเงินคงเหลือ : " + decimalFormat.format(balance));
 	}
 }

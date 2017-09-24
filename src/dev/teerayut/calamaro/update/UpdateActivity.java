@@ -194,9 +194,9 @@ public class UpdateActivity extends JDialog implements UpdateInterface.View {
 		int tableWidth = (centerPanelWidth / 4);
 		table.getColumnModel().getColumn(0).setPreferredWidth(tableWidth / 5);
 		table.getColumnModel().getColumn(1).setPreferredWidth(tableWidth / 2);
-		table.getColumnModel().getColumn(2).setPreferredWidth(tableWidth - 50);
-		table.getColumnModel().getColumn(3).setPreferredWidth(tableWidth);
-		table.getColumnModel().getColumn(4).setPreferredWidth(tableWidth);
+		table.getColumnModel().getColumn(2).setPreferredWidth(tableWidth - 60);
+		table.getColumnModel().getColumn(3).setPreferredWidth(tableWidth - 30);
+		table.getColumnModel().getColumn(4).setPreferredWidth(tableWidth - 30);
 		table.setRowHeight(70);
 		
 		DefaultTableCellRenderer centerRender = new DefaultTableCellRenderer();
