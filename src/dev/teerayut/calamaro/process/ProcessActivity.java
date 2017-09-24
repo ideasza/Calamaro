@@ -363,7 +363,10 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     						Float.parseFloat(
     								(currencyCode.equals(item.getBuyCode())) ? item.getBuyRate() : item.getSellRate())), "", "0.00"}
     		);
-    		currencyCode = String.valueOf(Integer.parseInt(currencyCode) + 1);
+    		if (currencyCode.equals("1") || currencyCode.equals("41")) {
+    			currencyCode = String.valueOf(Integer.parseInt(currencyCode) + 1);
+    		}
+    		
     		if (currencyCode.equals(item.getBuyCode())) {
     			this.currecyType = "Buy";
     		} else if (currencyCode.equals(item.getSellCode())) {
