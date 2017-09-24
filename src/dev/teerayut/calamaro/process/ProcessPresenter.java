@@ -58,9 +58,9 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 				view.onFail("ไม่สามารถบันทึกข้อมูลได้");
 			}
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
+			System.out.println("insert : " + e.getMessage());
 			connectionDB.closeAllTransaction();
-			view.onFail("Insert receipt : " + e.getMessage());
+			view.onFail("ไม่สามารถบันทึกข้อมูลการซื้อขายได้  ( " + e.getMessage() + " )");
 			
 		}
 	}
@@ -79,7 +79,7 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 			view.onGenerateKey(resultSet);
 		} catch(Exception e) {
 			resultSet = null;
-			view.onFail("Fail : " + e.getMessage());
+			view.onFail("ไม่สามารถดึงข้อมูลล่าสุดได้  ( " + e.getMessage() + " )");
 		}
 		connectionDB.closeAllTransaction();
 	}

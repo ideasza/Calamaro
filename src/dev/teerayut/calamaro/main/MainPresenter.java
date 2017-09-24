@@ -34,7 +34,7 @@ public class MainPresenter implements MainInterface.Presenter {
 			view.setCurrencyItem(resultSet);
 		} catch(Exception e) {
 			resultSet = null;
-			view.onFail("Fail : " + e.getLocalizedMessage());
+			view.onFail("ไม่สามารถดึงรายการสกุลเงินได้ ( " + e.getLocalizedMessage() + " )");
 			connectionDB.closeAllTransaction();
 		}
 		connectionDB.closeAllTransaction();
@@ -63,12 +63,12 @@ public class MainPresenter implements MainInterface.Presenter {
 			if (resultSet.isBeforeFirst()) {
 				view.onProcessCurrency(resultSet);
 			} else {
-				view.onFail("Fail : data not found (" + code + ")");
+				view.onFail("ไม่สามารถดึงข้อมูลสกุลเงินได้ ( " + code + " )");
 			}
 		} catch(Exception e) {
 			resultSet = null;
 			//System.out.println(e.getSQLState());
-			view.onFail("Fail : data not found (" + code + ")");
+			view.onFail("ไม่สามารถดึงข้อมูลสกุลเงินได้ ( " + code + " )");
 			connectionDB.closeAllTransaction();
 		}
 		connectionDB.closeAllTransaction();
@@ -104,7 +104,7 @@ public class MainPresenter implements MainInterface.Presenter {
 			resultSet = connectionDB.dbQuery(sb.toString());
 			MoneyBegin = Float.parseFloat(resultSet.getString("money_value"));
 		} catch(Exception e) {
-			System.out.println("Error: " + e.getMessage());
+			System.out.println("Error getMoneyBegin: " + e.getMessage());
 			connectionDB.closeAllTransaction();
 			return 0;
 		}
@@ -131,7 +131,7 @@ public class MainPresenter implements MainInterface.Presenter {
 			}
 			connectionDB.closeAllTransaction();
 		} catch (Exception e) {
-			System.out.println("Get Total query : " + e.getLocalizedMessage());
+			System.out.println("Error getTotalUsage : " + e.getLocalizedMessage());
 			e.printStackTrace();
 			connectionDB.closeAllTransaction();
 		}

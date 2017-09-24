@@ -64,10 +64,10 @@ public class UpdatePresenter implements UpdateInterface.Presenter{
 			psmt.setString(3, value3);
 			psmt.setInt(4, id);
 			if (psmt.executeUpdate() != 1) {
-				view.onFail("ไม่สามารถอัพเดทฐานข้อมูลได้");
+				view.onFail("ไม่สามารถอัพเดทสกุลเงินได้");
 			}
 		} catch(Exception e) {
-			view.onFail("Update : " + e.getMessage());
+			view.onFail("ไม่สามารถอัพเดทสกุลเงินได้ ( " + e.getMessage() + " )");
 			System.out.println(e.getMessage());
 		}
 	}

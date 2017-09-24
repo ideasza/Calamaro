@@ -28,6 +28,7 @@ import dev.teerayut.calamaro.model.CurrencyItem;
 import dev.teerayut.calamaro.tableheader.ColumnGroup;
 import dev.teerayut.calamaro.tableheader.GroupableTableHeader;
 import dev.teerayut.calamaro.utils.tableImageRenderrer;
+import javax.swing.SwingConstants;
 
 public class ShowActivity extends JFrame implements ShowInterface.View {
 
@@ -97,6 +98,9 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		table.setFocusTraversalKeysEnabled(false);
 		
 		lblCompanyName = new javax.swing.JLabel();
+		lblCompanyName.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblCompanyName.setVerticalTextPosition(SwingConstants.BOTTOM);
+		lblCompanyName.setRequestFocusEnabled(false);
 		lblCompanyName.setFocusTraversalKeysEnabled(false);
 		lblCompanyName.setFocusable(false);
 	}
@@ -126,7 +130,7 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		initWidget();
 
 		topPanel.setBackground(new Color(255, 204, 102));
-		topPanel.setPreferredSize(new java.awt.Dimension(width, 170));
+		topPanel.setPreferredSize(new java.awt.Dimension(width, 160));
 		getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
 		
 		Leftpanel.setBackground(new Color(255, 204, 102));
@@ -139,12 +143,12 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		
 		getContentPane().add(scrollPane, java.awt.BorderLayout.CENTER);
 		
-		Bottompanel.setPreferredSize(new java.awt.Dimension(width, 5));
+		Bottompanel.setPreferredSize(new java.awt.Dimension(width, 25));
 		getContentPane().add(Bottompanel, java.awt.BorderLayout.SOUTH);
 		Bottompanel.setBackground(new Color(255, 204, 102));
 		
 		lblCompanyName.setForeground(new Color(0, 0, 0));
-		lblCompanyName.setFont(new Font("Angsana New", Font.BOLD, 60));
+		lblCompanyName.setFont(new Font("Angsana New", Font.BOLD, 58));
 		lblCompanyName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 		topPanel.add(lblCompanyName, java.awt.BorderLayout.CENTER);
 		lblCompanyName.setIcon(new ImageIcon(getClass().getResource("/ic_calamaro.png")));
@@ -202,7 +206,7 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 			});
 		}
 		table.setModel(model);
-		table.setFont(new Font("Tahoma", Font.BOLD, 50));
+		table.setFont(new Font("Tahoma", Font.BOLD, 45));
 		
 		int screenHeight = height;
 		int scrollWidth = width;
@@ -226,7 +230,7 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
         groupHeader.addColumnGroup(g_buyrate);
         groupHeader.addColumnGroup(g_sellrate);
     	
-		table.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 60));
+		table.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 55));
 		table.getTableHeader().setReorderingAllowed(false);
 		table.getTableHeader().setResizingAllowed(false);
 		
@@ -234,7 +238,7 @@ public class ShowActivity extends JFrame implements ShowInterface.View {
 		table.getColumnModel().getColumn(1).setPreferredWidth(columnsWidth - mdCol);
 		table.getColumnModel().getColumn(2).setPreferredWidth(columnsWidth + (smCol / 2));
 		table.getColumnModel().getColumn(3).setPreferredWidth(columnsWidth + (smCol / 2));
-		table.setRowHeight((rowHeight / 7) + (smCol / 3));
+		table.setRowHeight((rowHeight / 7) + (smCol / 4));
 		
 		/*DefaultTableCellRenderer centerRender = new DefaultTableCellRenderer();
 		centerRender.setHorizontalAlignment(JLabel.CENTER);

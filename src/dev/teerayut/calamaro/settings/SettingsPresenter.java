@@ -40,7 +40,7 @@ public class SettingsPresenter implements SettingsInterface.Presenter {
 			}
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
-			view.onFail("Insert receipt : " + e.getMessage());
+			view.onFail("ไม่สามารถบันทึกเงินตั้งต้นได้ ( " + e.getMessage() + " )");
 			connectionDB.closeAllTransaction();
 		}
 	}

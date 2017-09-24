@@ -41,7 +41,6 @@ public class Receive {
 			date = timeSplit[0];
 			time = timeSplit[1];
 			number = m.getReportNumber();
-			System.out.println(date + " " + time + ", " + number);
 		}
 		printerService = new PrinterServiceClass();
 		PrinterOptionsClass p = new PrinterOptionsClass();
@@ -72,23 +71,23 @@ public class Receive {
         p.newLine();
         for (int i = 0 ; i < calModel.size(); i++) {
 
-       	 	String item = String.format("%-10s %6.2f %10s %11s", 
+        	float amout = Float.parseFloat(calModel.get(i).getReportAmount().trim());
+        	float total = Float.parseFloat(calModel.get(i).getReportTotal().trim());
+       	 	String item = String.format("%-10s %6s %10s %11s", 
        	 	calModel.get(i).getReportCurrency().trim(), 
-       	 	(calModel.get(i).getReportType().equals("Buy")) 
-       	 	? Float.parseFloat(calModel.get(i).getReportBuyRate()) : Float.parseFloat(calModel.get(i).getReportSellRate()),
-       	 	new Convert().formatDecimal(Float.parseFloat(calModel.get(i).getReportAmount().trim())), 
-       	 	new Convert().formatDecimal(Float.parseFloat(calModel.get(i).getReportTotal().trim())));
-       	 	
+       	 	(calModel.get(i).getReportType().equals("Buy")) ? calModel.get(i).getReportBuyRate() : calModel.get(i).getReportSellRate(),
+       	 	df.format(amout), 
+       	 	df.format(total));
+   
        	 	p.setText(item);
 
-        	float total = Float.parseFloat(calModel.get(i).getReportTotal().trim());
         	grandTotal += total;
         	p.newLine();
         }
         p.newLine();
         p.addLineSeperator2();
         p.newLine();
-        String totalItem = String.format("%-10s %6.2s %10s %11s", "Total", "", "", new Convert().formatDecimal(grandTotal));
+        String totalItem = String.format("%-10s %6.2s %10s %11s", "Total", "", "", df.format(grandTotal));
         p.setText(totalItem);
 	    p.newLine();
         p.addLineSeperator2();
