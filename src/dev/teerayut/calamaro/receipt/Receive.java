@@ -73,7 +73,13 @@ public class Receive {
 
         	float amout = Float.parseFloat(calModel.get(i).getReportAmount().trim());
         	float total = Float.parseFloat(calModel.get(i).getReportTotal().trim());
-       	 	String item = String.format("%-10s %6s %10s %11s", 
+        	String fm = "%-10s %6s %10s %10s";
+        	if (calModel.get(i).getReportBuyRate().length() > 6 || calModel.get(i).getReportSellRate().length() > 6) {
+        		fm = "%-8s %6s %10s %11s";
+        	} else {
+        		fm = "%-10s %6s %10s %10s";
+        	}
+       	 	String item = String.format(fm, 
        	 	calModel.get(i).getReportCurrency().trim(), 
        	 	(calModel.get(i).getReportType().equals("Buy")) ? calModel.get(i).getReportBuyRate() : calModel.get(i).getReportSellRate(),
        	 	df.format(amout), 

@@ -362,11 +362,6 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     private void setItemToTable() {
     	for (int i = 0; i < currencyItemList.size(); i++) {
     		CurrencyItem item = currencyItemList.get(i);
-    		model.addRow(new Object[] {
-    				item.getName(), 
-    				Float.parseFloat(
-    								(currencyCode.equals(item.getBuyCode())) ? item.getBuyRate() : item.getSellRate()), "", "0.00"}
-    		);
     		
     		if (currencyItemList.size() > 1) {
     			if (i == 0) {
@@ -378,10 +373,14 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     		} else {
     			currencyCode = currencyCode;
     		}
+    		model.addRow(new Object[] {
+    				item.getName(), 
+    				Float.parseFloat(
+    								(currencyCode.equals(item.getBuyCode())) ? item.getBuyRate() : item.getSellRate()), "", "0.00"}
+    		);
     		
-    		//System.out.println("Code : " + currencyCode);
+    		System.out.println("Code : " + currencyCode);
     		if (currencyCode.equals(item.getBuyCode())) {
-    			
     			this.currecyType = "Buy";
     		} else if (currencyCode.equals(item.getSellCode())) {
     			this.currecyType = "Sell";
