@@ -153,8 +153,18 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
     		@Override
     		public void keyPressed(KeyEvent e) {
     			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-    				presenter.insertMoneyBegin(textField_1.getText().toString());
-    				presenter.requestMoneyBegin();
+    				String money = textField_1.getText().toString();
+    				String[] moneySplit = money.split("-");
+    				String moneyBalance;
+    				if (!textField_1.getText().toString().isEmpty()) {
+    					if (moneySplit.length > 1) {
+    						presenter.insertMoneyBegin(moneySplit[0]);
+    						presenter.insertReportFromBugFix(moneySplit[1]);
+    					} else {
+    						presenter.insertMoneyBegin(textField_1.getText().toString());
+    					}
+    					presenter.requestMoneyBegin();
+    				}
     			}
     		}
     	});
@@ -179,12 +189,18 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				prefs.setPreferrence("db_path", textField.getText().toString());
-				presenter.insertMoneyBegin(textField_1.getText().toString());
+				String money = textField_1.getText().toString();
+				String[] moneySplit = money.split("-");
+				String moneyBalance;
 				if (!textField_1.getText().toString().isEmpty()) {
-					presenter.insertMoneyBegin(textField_1.getText().toString());
+					if (moneySplit.length > 1) {
+						presenter.insertMoneyBegin(moneySplit[0]);
+						presenter.insertReportFromBugFix(moneySplit[1]);
+					} else {
+						presenter.insertMoneyBegin(textField_1.getText().toString());
+					}
 				}
 		        dispose();
-		        
 			}
 		});    	
     }

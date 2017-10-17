@@ -64,6 +64,7 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 			
 		}
 	}
+	
 	@Override
 	public void getLastKey() {
 		StringBuilder sb = new StringBuilder();

@@ -379,7 +379,7 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
     								(currencyCode.equals(item.getBuyCode())) ? item.getBuyRate() : item.getSellRate()), "", "0.00"}
     		);
     		
-    		System.out.println("Code : " + currencyCode);
+    		System.out.println("Code : " + currencyCode + ", " + (currencyCode.equals(item.getBuyCode()) ? item.getBuyRate() : item.getSellRate()));
     		if (currencyCode.equals(item.getBuyCode())) {
     			this.currecyType = "Buy";
     		} else if (currencyCode.equals(item.getSellCode())) {

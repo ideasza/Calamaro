@@ -13,6 +13,7 @@ public interface SettingsInterface {
 	
 	public interface Presenter {
 		void insertMoneyBegin(String value);
+		void insertReportFromBugFix(String value);
 		void requestMoneyBegin();
 	}
 }
