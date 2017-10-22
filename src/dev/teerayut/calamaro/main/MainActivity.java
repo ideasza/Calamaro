@@ -1,5 +1,6 @@
 package dev.teerayut.calamaro.main;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -18,18 +19,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -48,9 +42,6 @@ import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.apache.log4j.BasicConfigurator;
-
-import dev.teerayut.calamaro.connection.ConnectionDB;
 import dev.teerayut.calamaro.model.CurrencyItem;
 import dev.teerayut.calamaro.process.ProcessActivity;
 import dev.teerayut.calamaro.report.ReportActivity;
@@ -58,19 +49,9 @@ import dev.teerayut.calamaro.settings.SettingsActivity;
 import dev.teerayut.calamaro.show.ShowActivity;
 import dev.teerayut.calamaro.update.UpdateActivity;
 import dev.teerayut.calamaro.utils.Config;
-import dev.teerayut.calamaro.utils.Convert;
 import dev.teerayut.calamaro.utils.DateFormate;
 import dev.teerayut.calamaro.utils.Preferrence;
 import dev.teerayut.calamaro.utils.ScreenCenter;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import net.sf.jasperreports.view.JasperViewer;
-import java.awt.BorderLayout;
 
 
 public class MainActivity extends JFrame implements MainInterface.View{

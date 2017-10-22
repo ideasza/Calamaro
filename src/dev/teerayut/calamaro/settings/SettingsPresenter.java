@@ -2,6 +2,7 @@ package dev.teerayut.calamaro.settings;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import dev.teerayut.calamaro.connection.ConnectionDB;
 import dev.teerayut.calamaro.model.CalculateModel;
@@ -47,17 +48,25 @@ public class SettingsPresenter implements SettingsInterface.Presenter {
 
 	@Override
 	public void requestMoneyBegin() {
+		float m = 0;
+		
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
 		sb.append("SELECT money_value ");
 		sb.append("FROM MoneyConfig ");
-		sb.append("ORDER BY money_id DESC LIMIT 1");
+		sb.append("WHERE money_create_date LIKE '" + new DateFormate().getDateOnly() + "%'");
+		//sb.append("ORDER BY money_id DESC LIMIT 1");
 		connectionDB = new ConnectionDB();
 		try {
 			resultSet = connectionDB.dbQuery(sb.toString());
-			String money = resultSet.getString("money_value");
-			view.setMoneyToTextFeild(money);
-		} catch(Exception e) {
+			while(resultSet.next()) {
+				Float moneyfloat = Float.parseFloat(resultSet.getString("money_value"));
+				m += moneyfloat;
+			}
+			//System.out.println(m);
+			//String money = resultSet.getString("money_value");
+			view.setMoneyToTextFeild(String.valueOf(m));
+		} catch(SQLException e) {
 			resultSet = null;
 			System.out.println("Error: " + e.getMessage());
 			connectionDB.closeAllTransaction();

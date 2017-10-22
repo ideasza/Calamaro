@@ -153,8 +153,13 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
     		@Override
     		public void keyPressed(KeyEvent e) {
     			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-    				String money = textField_1.getText().toString();
-    				String[] moneySplit = money.split("-");
+    				//String money = textField_1.getText().toString();
+    				if (!textField_1.getText().toString().isEmpty()) {
+    					presenter.insertMoneyBegin(textField_1.getText().toString());
+    				}
+    				
+    				presenter.requestMoneyBegin();
+    				/*String[] moneySplit = money.split("-");
     				String moneyBalance;
     				if (!textField_1.getText().toString().isEmpty()) {
     					if (moneySplit.length > 1) {
@@ -164,7 +169,7 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
     						presenter.insertMoneyBegin(textField_1.getText().toString());
     					}
     					presenter.requestMoneyBegin();
-    				}
+    				}*/
     			}
     		}
     	});
@@ -189,8 +194,13 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				prefs.setPreferrence("db_path", textField.getText().toString());
-				String money = textField_1.getText().toString();
-				String[] moneySplit = money.split("-");
+				//String money = textField_1.getText().toString();
+				if (!textField_1.getText().toString().isEmpty()) {
+					presenter.insertMoneyBegin(textField_1.getText().toString());
+				}
+				
+				presenter.requestMoneyBegin();
+				/*String[] moneySplit = money.split("-");
 				String moneyBalance;
 				if (!textField_1.getText().toString().isEmpty()) {
 					if (moneySplit.length > 1) {
@@ -199,7 +209,8 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
 					} else {
 						presenter.insertMoneyBegin(textField_1.getText().toString());
 					}
-				}
+					presenter.requestMoneyBegin();
+				}*/
 		        dispose();
 			}
 		});    	
@@ -265,8 +276,10 @@ public class SettingsActivity extends JDialog implements SettingsInterface.View 
 		try {
 			if (!money.isEmpty()) {
 				lblNewLabel.setText(decimalFormat.format(Float.parseFloat(money.trim())));
+				textField_1.setText("");
 			} else {
 				lblNewLabel.setText("");
+				textField_1.setText("");
 			}
 		} catch (Exception e) {
 			lblNewLabel.setText("");

@@ -76,7 +76,8 @@ public class MainPresenter implements MainInterface.Presenter {
 
 	@Override
 	public void getMoneyBalance() {
-		MoneyBegin = getMoneyBegin();
+		getMoneyBegin();
+		//MoneyBegin = getMoneyBegin();
 		MoneyBalance = 0;
 		getTotalUsage();
 		if (AmountBuy == 0 && AmountSell == 0) {
@@ -93,23 +94,30 @@ public class MainPresenter implements MainInterface.Presenter {
 		view.onCheckMoneyBalance(MoneyBegin, MoneyBalance);
 	}
 	
-	private float getMoneyBegin() {
+	private void getMoneyBegin() {
+		float MoneyB = 0;
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
 		sb.append("SELECT money_id, money_value ");
 		sb.append("FROM MoneyConfig ");
-		sb.append("ORDER BY money_id DESC LIMIT 1");
+		sb.append("WHERE money_create_date LIKE '" + new DateFormate().getDateOnly() + "%'");
+		//sb.append("ORDER BY money_id DESC LIMIT 1");
 		connectionDB = new ConnectionDB();
 		try {
 			resultSet = connectionDB.dbQuery(sb.toString());
-			MoneyBegin = Float.parseFloat(resultSet.getString("money_value"));
+			while(resultSet.next()) {
+				Float moneyfloat = Float.parseFloat(resultSet.getString("money_value"));
+				MoneyB += moneyfloat;
+			}
+			MoneyBegin = MoneyB;
 		} catch(Exception e) {
 			System.out.println("Error getMoneyBegin: " + e.getMessage());
 			connectionDB.closeAllTransaction();
-			return 0;
+			MoneyBegin = 0;
+			//return 0;
 		}
 		connectionDB.closeAllTransaction();
-		return MoneyBegin;
+		//return MoneyBegin;
 	}
 	
 	private void getTotalUsage() {
