@@ -17,12 +17,14 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -261,6 +263,10 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 	            if (isColumnSelected(2)) {
 	            	column = 2;
 	            	jc.requestFocus();
+	            	JTextField textField = new JTextField();
+	            	textField.setFont(new Font("Angsana New", Font.BOLD, 30));
+	            	DefaultCellEditor dce = new DefaultCellEditor( textField );
+	            	table.getColumnModel().getColumn(column).setCellEditor(dce);
 	            } else if (isColumnSelected(3)) {
 	            	button.requestFocus();
 	            }
@@ -305,7 +311,7 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 		int tableWidth = (750 / 4);
 		JTableHeader header = table.getTableHeader();
     	header.setPreferredSize(new Dimension(tableWidth, 40));
-		table.getTableHeader().setFont(new Font("Angsana New", Font.BOLD, 24));
+		table.getTableHeader().setFont(new Font("Angsana New", Font.BOLD, 30));
 		table.getTableHeader().setReorderingAllowed(false);
 		table.getTableHeader().setResizingAllowed(false);
 		table.setFillsViewportHeight(true); 
@@ -316,7 +322,7 @@ public class ProcessActivity extends JDialog implements ProcessInterface.View{
 		table.getColumnModel().getColumn(2).setPreferredWidth(tableWidth);
 		table.getColumnModel().getColumn(3).setPreferredWidth(tableWidth);
 		table.setRowHeight(45);
-		table.setFont(new Font("Angsana New", Font.BOLD, 20));
+		table.setFont(new Font("Angsana New", Font.BOLD, 32));
 		tableScroll.setViewportView(table);
 		
 		DefaultTableCellRenderer centerRender = new DefaultTableCellRenderer();

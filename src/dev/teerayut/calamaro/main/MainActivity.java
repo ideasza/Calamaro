@@ -180,17 +180,17 @@ public class MainActivity extends JFrame implements MainInterface.View{
 			@Override
 			public void windowOpened(WindowEvent e) {
 				prefs = new Preferrence();
-				sc = new ShowActivity();
+//				sc = new ShowActivity();
 				File database = new File(Config.DB_PATH + Config.DB_FILE);
 				if (database.exists()) {
 					prefs.setPreferrence("settings_open", "1");
 					lblSource.setText(" jdbc:sqlite: " + new File(Config.DB_PATH + Config.DB_FILE).getAbsolutePath().toString());
 	                lblSource.setIcon(new ImageIcon(getClass().getResource("/database_connect.png")));
 	        		presenter.requestCurrency();
-	        		if (!sc.isShowing()) {
-						sc.setLocation(moniter2);
-			            sc.setVisible(true);
-					}
+//	        		if (!sc.isShowing()) {
+//						sc.setLocation(moniter2);
+//			            sc.setVisible(true);
+//					}
 				} else {
 					prefs.setPreferrence("settings_open", "0");
 					edit.setEnabled(false);
@@ -307,6 +307,7 @@ public class MainActivity extends JFrame implements MainInterface.View{
 	}
 	
 	private void menu() {
+		sc = new ShowActivity();
 		JMenuBar menu = new JMenuBar();
 		setJMenuBar(menu);
 		edit = new JMenu("\u0E41\u0E01\u0E49\u0E44\u0E02\u0E40\u0E23\u0E17");
@@ -345,6 +346,52 @@ public class MainActivity extends JFrame implements MainInterface.View{
 			}
 		});
 		report.add(menuItem_1);
+		
+		JMenu showRate = new JMenu("แสดงเรท");
+//		showRate.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseClicked(MouseEvent arg0) {
+//				sc = new ShowActivity();
+//        		if (!sc.isShowing()) {
+//					sc.setLocation(moniter2);
+//		            sc.setVisible(true);
+//				}
+//			}
+//		});
+		menu.add(showRate);
+		JMenuItem item1 = new JMenuItem("เปิด");
+		JMenuItem item2 = new JMenuItem("ปิด");
+		
+		item1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+        		if (!sc.isShowing()) {
+					sc.setLocation(moniter2);
+		            sc.setVisible(true);
+		            
+		            item1.setEnabled(false);
+					item2.setEnabled(true);
+				}
+			}
+		});
+		showRate.add(item1);
+		item2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+        		if (sc.isShowing()) {
+		            sc.setVisible(false);
+		            item1.setEnabled(true);
+					item2.setEnabled(false);
+				}
+			}
+		});
+		showRate.add(item2);
+		
+		if (sc.isShowing()) {
+			item1.setEnabled(false);
+			item2.setEnabled(true);
+		} else {
+			item1.setEnabled(true);
+			item2.setEnabled(false);
+		}
 		
 		JMenu settings = new JMenu("\u0E15\u0E31\u0E49\u0E07\u0E04\u0E48\u0E32");
 		settings.addMouseListener(new MouseAdapter() {

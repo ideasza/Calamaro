@@ -23,7 +23,7 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 	
 	@Override
 	public void insertReceipt(List<CalculateModel> calculateList) {
-		this.calList = calculateList;
+//		this.calList = calculateList;
 		StringBuilder sb = new StringBuilder();
 		sb.delete(0, sb.length());
 		
@@ -46,23 +46,39 @@ public class ProcessPresenter implements ProcessInterface.Presenter {
 				psmt.setString(7, model.getReportAmount());
 				psmt.setString(8, model.getReportTotal());
 				psmt.setString(9, new DateFormate().getDateOnly());
-				is = psmt.executeUpdate();
+				psmt.executeUpdate();
 			}
-			if (is == 1) {
-				new Receive().printReceipt(calList);
-				connectionDB.closeAllTransaction();
-				view.onSuccess("บันทึกรายการซื้อขายแล้ว");
-				calculateList.clear();
-			} else {
-				connectionDB.closeAllTransaction();
-				view.onFail("ไม่สามารถบันทึกข้อมูลได้");
-			}
+			
+			
+//			if (is == 1) {
+//				new Receive().printReceipt(calList);
+//				connectionDB.closeAllTransaction();
+//				view.onSuccess("บันทึกรายการซื้อขายแล้ว");
+//				calculateList.clear();
+//			} else {
+//				connectionDB.closeAllTransaction();
+//				view.onFail("ไม่สามารถบันทึกข้อมูลได้");
+//			}
 		} catch(Exception e) {
 			System.out.println("insert : " + e.getMessage());
 			connectionDB.closeAllTransaction();
 			view.onFail("ไม่สามารถบันทึกข้อมูลการซื้อขายได้  ( " + e.getMessage() + " )");
 			
 		}
+		
+		try {
+			Receive receive = new Receive();
+			for (int i = 0; i < 2; i++) {
+				receive.printReceipt(calculateList);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println("print : " + e.getMessage());
+			e.printStackTrace();
+		}
+		connectionDB.closeAllTransaction();
+		view.onSuccess("บันทึกรายการซื้อขายแล้ว");
+		calculateList.clear();
 	}
 	
 	@Override

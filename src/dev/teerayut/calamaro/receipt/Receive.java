@@ -33,9 +33,9 @@ public class Receive {
 	
 	private PrinterServiceClass printerService;
 	private PrinterOptionsClass printerOptions;
-	static String printerName = "EPSON TM-U220 Receipt";
+	static String printerName = "EPSON TM-T82 ReceiptSA4";
 	
-	public void printReceipt(List<CalculateModel> calModel) {
+	public void printReceipt(List<CalculateModel> calModel) throws Exception {
 		for(CalculateModel m : calModel) {
 			String[] timeSplit = m.getReportDate().split(" ");
 			date = timeSplit[0];
