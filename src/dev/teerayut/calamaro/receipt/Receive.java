@@ -28,7 +28,7 @@ import dev.teerayut.calamaro.utils.Convert;
 
 public class Receive {	
 	private String date, time, number;
-	private float grandTotal = 0;
+//	private float grandTotal = 0;
 	private DecimalFormat df = new DecimalFormat("#,###.00");
 	
 	private PrinterServiceClass printerService;
@@ -69,6 +69,7 @@ public class Receive {
         p.newLine();
         p.addLineSeperator();
         p.newLine();
+        float grandTotal = 0;
         for (int i = 0 ; i < calModel.size(); i++) {
 
         	float amout = Float.parseFloat(calModel.get(i).getReportAmount().trim());
